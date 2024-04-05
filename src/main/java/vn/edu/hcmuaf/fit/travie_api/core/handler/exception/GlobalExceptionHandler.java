@@ -65,7 +65,7 @@ public class GlobalExceptionHandler {
     @ExceptionHandler(UnsupportFileTypeException.class)
     @ResponseStatus(HttpStatus.UNSUPPORTED_MEDIA_TYPE)
     public ResponseEntity<HttpResponse> handleUnsupportFileTypeException(UnsupportFileTypeException ex) {
-        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(HttpResponse.fail(ex.getMessage()));
+        return ResponseEntity.status(HttpStatus.UNSUPPORTED_MEDIA_TYPE).body(HttpResponse.fail(ex.getMessage()));
     }
 
     @ExceptionHandler(NotFoundException.class)

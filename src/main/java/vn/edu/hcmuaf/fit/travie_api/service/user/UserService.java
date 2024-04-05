@@ -2,8 +2,7 @@ package vn.edu.hcmuaf.fit.travie_api.service.user;
 
 import org.springframework.web.multipart.MultipartFile;
 import vn.edu.hcmuaf.fit.travie_api.core.handler.exception.BaseException;
-import vn.edu.hcmuaf.fit.travie_api.dto.user.UserProfileDTO;
-import vn.edu.hcmuaf.fit.travie_api.dto.user.UserProfileUpdate;
+import vn.edu.hcmuaf.fit.travie_api.dto.user.*;
 
 public interface UserService {
     UserProfileDTO getProfile() throws BaseException;
@@ -12,5 +11,5 @@ public interface UserService {
 
     void updateAvatar(MultipartFile avatar) throws BaseException;
 
-    void changePassword(String oldPassword, String newPassword) throws BaseException;
+    void changePassword(ChangePasswordRequest request) throws BaseException;
 }
