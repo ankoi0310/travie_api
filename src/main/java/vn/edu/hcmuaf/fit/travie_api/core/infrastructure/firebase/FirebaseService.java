@@ -18,9 +18,9 @@ public class FirebaseService {
     @PostConstruct
     public void init() throws IOException {
         // Check if the Firebase app has already been initialized
-        if (!FirebaseApp.getApps().isEmpty()) {
-            return;
-        }
+//        if (!FirebaseApp.getApps().isEmpty()) {
+//            return;
+//        }
 
         FileInputStream serviceAccount =
                 new FileInputStream("./serviceAccountKey.json");

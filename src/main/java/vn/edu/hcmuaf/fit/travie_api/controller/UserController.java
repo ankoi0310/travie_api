@@ -26,6 +26,12 @@ public class UserController {
         return ResponseEntity.ok(HttpResponse.success(data, "Cập nhật thông tin thành công!"));
     }
 
+    @PutMapping("/avatar")
+    public ResponseEntity<HttpResponse> updateAvatar(@RequestParam("avatar") String avatar) throws BaseException {
+        userService.updateAvatar(avatar);
+        return ResponseEntity.ok(HttpResponse.success("Cập nhật ảnh đại diện thành công!"));
+    }
+
     @PutMapping("/change-password")
     public ResponseEntity<HttpResponse> changePassword(@RequestBody ChangePasswordRequest request) throws BaseException {
         userService.changePassword(request);

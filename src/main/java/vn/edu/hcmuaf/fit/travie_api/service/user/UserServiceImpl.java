@@ -2,12 +2,11 @@ package vn.edu.hcmuaf.fit.travie_api.service.user;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.web.multipart.MultipartFile;
 import vn.edu.hcmuaf.fit.travie_api.core.handler.exception.*;
+import vn.edu.hcmuaf.fit.travie_api.core.infrastructure.media.FileService;
 import vn.edu.hcmuaf.fit.travie_api.core.shared.utils.AppUtil;
 import vn.edu.hcmuaf.fit.travie_api.dto.user.*;
 import vn.edu.hcmuaf.fit.travie_api.entity.AppUser;
@@ -19,12 +18,10 @@ import vn.edu.hcmuaf.fit.travie_api.repository.user.UserRepository;
 @Transactional
 @RequiredArgsConstructor
 public class UserServiceImpl implements UserService {
-    @Value("${firebase.storage.bucket}")
-    private String firebaseStorageBucket;
-
     private final UserRepository userRepository;
     private final UserMapper userMapper;
 
+    private final FileService fileService;
     private final PasswordEncoder passwordEncoder;
 
     @Override
@@ -39,7 +36,7 @@ public class UserServiceImpl implements UserService {
             throw e;
         } catch (Exception e) {
             log.error(e.getMessage());
-            throw new BaseException("Lỗi không xác định!");
+            throw new ServiceBusinessException("Không thể lấy thông tin người dùng!");
         }
     }
 
@@ -62,25 +59,31 @@ public class UserServiceImpl implements UserService {
             throw e;
         } catch (Exception e) {
             log.error(e.getMessage());
-            throw new BaseException("Lỗi không xác định!");
+            throw new ServiceBusinessException("Không thể cập nhật thông tin người dùng!");
         }
     }
 
     @Override
-    public void updateAvatar(MultipartFile avatar) throws BaseException {
+    public void updateAvatar(String avatar) throws BaseException {
         try {
             String email = AppUtil.getCurrentEmail();
             AppUser user = userRepository.findByEmail(email)
                                          .orElseThrow(() -> new NotFoundException("Không tìm thấy thông tin người " +
                                                  "dùng!"));
 
+            // delete old avatar
+            if (user.getUserInfo().getAvatar() != null) {
+                fileService.removeFromFirebaseStorage(user.getUserInfo().getAvatar());
+            }
+
+            user.getUserInfo().setAvatar(avatar);
+
             userRepository.save(user);
         } catch (NotFoundException e) {
-            log.error(e.getMessage());
             throw e;
         } catch (Exception e) {
             log.error(e.getMessage());
-            throw new BaseException("Lỗi không xác định!");
+            throw new ServiceBusinessException("Không thể cập nhật ảnh đại diện!");
         }
     }
 
