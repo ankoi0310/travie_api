@@ -6,13 +6,24 @@ import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
 
 @Configuration
 public class AsyncConfiguration {
-    @Bean(name = "threadPoolTaskExecutorForVerificationMail")
-    public ThreadPoolTaskExecutor threadPoolTaskExecutorForVerificationMail() {
+    @Bean(name = "taskExecutorForVerificationMail")
+    public ThreadPoolTaskExecutor taskExecutorForVerificationMail() {
         ThreadPoolTaskExecutor executor = new ThreadPoolTaskExecutor();
         executor.setCorePoolSize(2);
         executor.setMaxPoolSize(2);
         executor.setQueueCapacity(500);
-        executor.setThreadNamePrefix("threadPoolTaskExecutorForVerificationMail-");
+        executor.setThreadNamePrefix("taskExecutorForVerificationMail-");
+        executor.initialize();
+        return executor;
+    }
+
+    @Bean(name = "taskExecutorForforgotPasswordMail")
+    public ThreadPoolTaskExecutor taskExecutorForForgotPasswordMail() {
+        ThreadPoolTaskExecutor executor = new ThreadPoolTaskExecutor();
+        executor.setCorePoolSize(2);
+        executor.setMaxPoolSize(2);
+        executor.setQueueCapacity(500);
+        executor.setThreadNamePrefix("taskExecutorForforgotPasswordMail-");
         executor.initialize();
         return executor;
     }

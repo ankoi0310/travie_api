@@ -1,8 +1,6 @@
 package vn.edu.hcmuaf.fit.travie_api.dto.auth;
 
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 import lombok.experimental.SuperBuilder;
 
 @Data
@@ -10,5 +8,6 @@ import lombok.experimental.SuperBuilder;
 @NoArgsConstructor
 @AllArgsConstructor
 public class RegisterResponse {
-    private String username;
+    private String fullName;
+    private String email;
 }

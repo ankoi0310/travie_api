@@ -14,6 +14,7 @@ import java.util.List;
 @Getter
 @Setter
 @SuperBuilder
+@ToString
 @NoArgsConstructor
 @AllArgsConstructor
 @Entity
@@ -24,23 +25,23 @@ public class AppUser extends BaseEntity implements UserDetails {
     private String password;
 
     @Builder.Default
-    private Boolean emailVerified = false;
+    private boolean emailVerified = false;
 
     @Builder.Default
-    private Boolean phoneVerified = false;
+    private boolean phoneVerified = false;
 
     @Builder.Default
-    private Boolean enabled = false;
+    private boolean enabled = false;
 
     @Builder.Default
-    private Boolean accountNonLocked = true;
+    private boolean accountNonLocked = true;
 
     @OneToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     @JoinColumn(referencedColumnName = "id")
     private UserInfo userInfo;
 
-    @OneToOne(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
-    @JoinColumn(referencedColumnName = "id", name = "app_role_id")
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "role_id")
     private AppRole appRole;
 
     @Override

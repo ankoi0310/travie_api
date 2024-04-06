@@ -10,16 +10,14 @@ import org.springframework.transaction.annotation.Transactional;
 import vn.edu.hcmuaf.fit.travie_api.core.handler.exception.*;
 import vn.edu.hcmuaf.fit.travie_api.core.infrastructure.jwt.JwtProvider;
 import vn.edu.hcmuaf.fit.travie_api.core.shared.constants.AppConstant;
+import vn.edu.hcmuaf.fit.travie_api.core.shared.enums.OTPType;
 import vn.edu.hcmuaf.fit.travie_api.dto.auth.*;
 import vn.edu.hcmuaf.fit.travie_api.entity.*;
 import vn.edu.hcmuaf.fit.travie_api.repository.approle.AppRoleRepository;
-import vn.edu.hcmuaf.fit.travie_api.repository.resetpasswordtoken.ResetPasswordTokenRepository;
+import vn.edu.hcmuaf.fit.travie_api.repository.otp.OtpInfoRepository;
 import vn.edu.hcmuaf.fit.travie_api.repository.user.UserRepository;
-import vn.edu.hcmuaf.fit.travie_api.repository.verificationtoken.VerificationTokenRepository;
 
-import java.time.LocalDateTime;
 import java.util.Optional;
-import java.util.UUID;
 
 @Log4j2
 @Service
@@ -28,12 +26,10 @@ import java.util.UUID;
 public class AuthenticationServiceImpl implements AuthenticationService {
     private final UserRepository userRepository;
     private final AppRoleRepository appRoleRepository;
-    private final VerificationTokenRepository verificationTokenRepository;
-    private final ResetPasswordTokenRepository resetPasswordTokenRepository;
-//    private final MailService mailService;
 
     private final JwtProvider jwtProvider;
     private final PasswordEncoder passwordEncoder;
+    private final OtpInfoRepository otpInfoRepository;
 
     @Override
     public RegisterResponse register(RegisterRequest registerRequest) throws BaseException {
@@ -49,75 +45,64 @@ public class AuthenticationServiceImpl implements AuthenticationService {
                 throw new NotFoundException("Số điện thoại đã tồn tại");
             }
 
-            AppRole defaultAppRole = appRoleRepository.findByRole(AppConstant.DEFAULT_ROLE).orElse(null);
-            if (defaultAppRole == null) {
-                throw new ServiceUnavailableException("Không tìm thấy quyền mặc định");
-            }
+            AppRole defaultAppRole = appRoleRepository.findByRole(AppConstant.DEFAULT_ROLE)
+                                                      .orElseThrow(() -> new ServiceUnavailableException("Không tìm " +
+                                                              "thấy quyền mặc định"));
 
-            UserInfo userInfo = UserInfo.builder()
-                                        .fullName(registerRequest.getFullName())
-                                        .birthday(registerRequest.getBirthday())
-                                        .build();
+            UserInfo newUserInfo = UserInfo.builder()
+                                           .fullName(registerRequest.getFullName())
+                                           .gender(registerRequest.getGender())
+                                           .birthday(registerRequest.getBirthday())
+                                           .build();
+
             AppUser newUser = AppUser.builder()
                                      .email(registerRequest.getEmail())
                                      .phone(registerRequest.getPhone())
                                      .password(passwordEncoder.encode(registerRequest.getPassword()))
-                                     .userInfo(userInfo)
+                                     .userInfo(newUserInfo)
                                      .appRole(defaultAppRole)
                                      .build();
 
+            System.out.println(newUser.toString());
+
             userRepository.save(newUser);
 
-            // create verification token
-            UUID token = UUID.randomUUID();
-            LocalDateTime expiredDate = LocalDateTime.now().plusDays(AppConstant.VERIFICATION_TOKEN_EXPIRED_DATE);
-            VerificationToken verificationToken = VerificationToken.builder()
-                                                                   .token(token)
-                                                                   .email(newUser.getEmail())
-                                                                   .expiredDate(expiredDate)
-                                                                   .build();
-
-            // TODO: Send email verification
-
-            verificationTokenRepository.save(verificationToken);
-
             return RegisterResponse.builder()
-                                   .username(newUser.getUsername())
+                                   .fullName(newUser.getUserInfo().getFullName())
+                                   .email(newUser.getEmail())
                                    .build();
         } catch (NotFoundException | ServiceUnavailableException e) {
             log.error(e.toString());
             throw e;
         } catch (Exception e) {
             log.error(e.toString());
-            throw new ServiceUnavailableException("Không thể tạo tài khoản mới");
+            throw new ServiceBusinessException("Không thể tạo tài khoản mới");
         }
     }
 
     @Override
-    public void verifyToken(UUID token) throws BaseException {
+    public void verify(String otp) throws BaseException {
         try {
-            VerificationToken verificationToken = verificationTokenRepository.findByToken(token)
-                                                                             .orElseThrow(() -> new BadRequestException(
-                                                                                     "Token không hợp lệ"));
+            OtpInfo otpInfo = otpInfoRepository.findByOtp(otp)
+                                               .orElseThrow(() -> new BadRequestException("OTP không hợp lệ"));
 
-            if (verificationToken.getExpiredDate().isBefore(LocalDateTime.now())) {
-                throw new BadRequestException("Token đã hết hạn");
+            if (otpInfo.getType() != OTPType.VERIFICATION) {
+                throw new BadRequestException("Loại OTP không hợp lệ");
             }
 
-            AppUser appUser = userRepository.findByEmail(verificationToken.getEmail())
+            AppUser appUser = userRepository.findByEmail(otpInfo.getEmail())
                                             .orElseThrow(() -> new NotFoundException("Tài khoản không tồn tại"));
 
             appUser.setEnabled(true);
             appUser.setEmailVerified(true);
             userRepository.save(appUser);
 
-            verificationTokenRepository.delete(verificationToken);
-        } catch (NotFoundException | BadRequestException e) {
-            log.error(e.toString());
+            otpInfoRepository.delete(otpInfo);
+        } catch (BaseException e) {
             throw e;
         } catch (Exception e) {
             log.error(e.toString());
-            throw new ServiceUnavailableException("Không thể xác thực tài khoản");
+            throw new ServiceBusinessException("Không thể xác thực OTP");
         }
     }
 
@@ -130,7 +115,7 @@ public class AuthenticationServiceImpl implements AuthenticationService {
             throw new BadRequestException("Mật khẩu không đúng");
         }
 
-        if (!appUser.getEnabled()) {
+        if (!appUser.isEnabled()) {
             throw new BadRequestException("Tài khoản chưa được kích hoạt");
         }
 
@@ -145,49 +130,19 @@ public class AuthenticationServiceImpl implements AuthenticationService {
     }
 
     @Override
-    public void forgetPassword(String email) throws BaseException {
-        try {
-            AppUser appUser = userRepository.findByEmail(email)
-                                            .orElseThrow(() -> new NotFoundException("Không tìm thấy tài khoản với " +
-                                                    "email này"));
-
-            // create verification token
-            UUID token = UUID.randomUUID();
-            LocalDateTime expiredDate = LocalDateTime.now().plusMinutes(AppConstant.RESET_PASSWORD_TOKEN_EXPIRED_DATE);
-            ResetPasswordToken resetPasswordToken = ResetPasswordToken.builder()
-                                                                      .token(token)
-                                                                      .email(appUser.getEmail())
-                                                                      .expiredDate(expiredDate)
-                                                                      .build();
-
-            resetPasswordTokenRepository.save(resetPasswordToken);
-        } catch (NotFoundException e) {
-            log.error(e.toString());
-            throw e;
-        } catch (Exception e) {
-            log.error(e.toString());
-            throw new ServiceUnavailableException("Không thể gửi yêu cầu đặt lại mật khẩu");
-        }
-    }
-
-    @Override
     public void resetPassword(ResetPasswordRequest request) throws BaseException {
         try {
-            ResetPasswordToken resetPasswordToken = resetPasswordTokenRepository.findByToken(request.getToken())
-                                                                                .orElseThrow(() -> new BadRequestException(
-                                                                                        "Token không hợp lệ"));
+            OtpInfo otpInfo = otpInfoRepository.findByOtp(request.getOtp())
+                                               .orElseThrow(() -> new BadRequestException(
+                                                       "OTP không hợp lệ"));
 
-            if (resetPasswordToken.getExpiredDate().isBefore(LocalDateTime.now())) {
-                throw new BadRequestException("Token đã hết hạn");
-            }
-
-            AppUser appUser = userRepository.findByEmail(resetPasswordToken.getEmail())
+            AppUser appUser = userRepository.findByEmail(otpInfo.getEmail())
                                             .orElseThrow(() -> new NotFoundException("Tài khoản không tồn tại"));
 
             appUser.setPassword(passwordEncoder.encode(request.getPassword()));
             userRepository.save(appUser);
 
-            resetPasswordTokenRepository.delete(resetPasswordToken);
+            otpInfoRepository.delete(otpInfo);
         } catch (NotFoundException | BadRequestException e) {
             throw e;
         } catch (Exception e) {

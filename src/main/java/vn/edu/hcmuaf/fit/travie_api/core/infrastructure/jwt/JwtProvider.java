@@ -20,10 +20,10 @@ import static java.util.Arrays.stream;
 
 @Component
 public class JwtProvider {
-    @Value("${spring.application.name}")
-    private String applicationName;
+    @Value("${app.name}")
+    private String name;
 
-    @Value("${spring.application.company}")
+    @Value("${app.company}")
     private String company;
 
     @Value("${jwt.secret}")
@@ -42,7 +42,7 @@ public class JwtProvider {
 
         return JWT.create()
                   .withIssuer(company)
-                  .withAudience(applicationName)
+                  .withAudience(name)
                   .withSubject(userDetails.getUsername())
                   .withArrayClaim(SecurityConstant.AUTHORITIES, claims)
                   .withIssuedAt(issuedAt)

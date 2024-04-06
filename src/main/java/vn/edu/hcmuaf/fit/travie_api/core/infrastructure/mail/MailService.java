@@ -1,10 +1,11 @@
 package vn.edu.hcmuaf.fit.travie_api.core.infrastructure.mail;
 
-import org.springframework.scheduling.annotation.Async;
-import vn.edu.hcmuaf.fit.travie_api.core.handler.exception.BadRequestException;
+import vn.edu.hcmuaf.fit.travie_api.core.handler.exception.BaseException;
+
+import java.util.concurrent.CompletableFuture;
 
 public interface MailService {
+    CompletableFuture<Void> sendVerificationMail(String name, String email, String otp) throws BaseException;
 
-    @Async("threadPoolTaskExecutorForVerificationMail")
-    void sendVerificationMail(String name, String email, String token) throws BadRequestException;
+    CompletableFuture<Void> sendResetPasswordMail(String name, String email, String otp) throws BaseException;
 }
