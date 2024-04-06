@@ -2,8 +2,10 @@ package vn.edu.hcmuaf.fit.travie_api.entity;
 
 import jakarta.persistence.*;
 import lombok.*;
+import org.hibernate.annotations.JdbcTypeCode;
 
 import java.io.Serializable;
+import java.sql.Types;
 import java.time.LocalDateTime;
 import java.util.UUID;
 
@@ -23,6 +25,7 @@ public class ResetPasswordToken implements Serializable {
     private String email;
 
     @Column(unique = true)
+    @JdbcTypeCode(Types.VARCHAR)
     private UUID token;
 
     private LocalDateTime expiredDate;

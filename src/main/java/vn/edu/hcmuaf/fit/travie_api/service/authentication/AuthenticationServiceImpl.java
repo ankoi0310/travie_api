@@ -12,7 +12,6 @@ import vn.edu.hcmuaf.fit.travie_api.core.infrastructure.jwt.JwtProvider;
 import vn.edu.hcmuaf.fit.travie_api.core.shared.constants.AppConstant;
 import vn.edu.hcmuaf.fit.travie_api.dto.auth.*;
 import vn.edu.hcmuaf.fit.travie_api.entity.*;
-import vn.edu.hcmuaf.fit.travie_api.mapper.UserMapper;
 import vn.edu.hcmuaf.fit.travie_api.repository.approle.AppRoleRepository;
 import vn.edu.hcmuaf.fit.travie_api.repository.resetpasswordtoken.ResetPasswordTokenRepository;
 import vn.edu.hcmuaf.fit.travie_api.repository.user.UserRepository;
@@ -33,7 +32,6 @@ public class AuthenticationServiceImpl implements AuthenticationService {
     private final ResetPasswordTokenRepository resetPasswordTokenRepository;
 //    private final MailService mailService;
 
-    private final UserMapper userMapper;
     private final JwtProvider jwtProvider;
     private final PasswordEncoder passwordEncoder;
 
@@ -147,7 +145,7 @@ public class AuthenticationServiceImpl implements AuthenticationService {
     }
 
     @Override
-    public void forgotPassword(String email) throws BaseException {
+    public void forgetPassword(String email) throws BaseException {
         try {
             AppUser appUser = userRepository.findByEmail(email)
                                             .orElseThrow(() -> new NotFoundException("Không tìm thấy tài khoản với " +
@@ -173,9 +171,9 @@ public class AuthenticationServiceImpl implements AuthenticationService {
     }
 
     @Override
-    public void resetPassword(UUID token, String newPassword) throws BaseException {
+    public void resetPassword(ResetPasswordRequest request) throws BaseException {
         try {
-            ResetPasswordToken resetPasswordToken = resetPasswordTokenRepository.findByToken(token)
+            ResetPasswordToken resetPasswordToken = resetPasswordTokenRepository.findByToken(request.getToken())
                                                                                 .orElseThrow(() -> new BadRequestException(
                                                                                         "Token không hợp lệ"));
 
@@ -186,16 +184,15 @@ public class AuthenticationServiceImpl implements AuthenticationService {
             AppUser appUser = userRepository.findByEmail(resetPasswordToken.getEmail())
                                             .orElseThrow(() -> new NotFoundException("Tài khoản không tồn tại"));
 
-            appUser.setPassword(passwordEncoder.encode(newPassword));
+            appUser.setPassword(passwordEncoder.encode(request.getPassword()));
             userRepository.save(appUser);
 
             resetPasswordTokenRepository.delete(resetPasswordToken);
         } catch (NotFoundException | BadRequestException e) {
-            log.error(e.toString());
             throw e;
         } catch (Exception e) {
             log.error(e.toString());
-            throw new ServiceUnavailableException("Không thể đặt lại mật khẩu");
+            throw new ServiceBusinessException("Không thể đặt lại mật khẩu");
         }
     }
 

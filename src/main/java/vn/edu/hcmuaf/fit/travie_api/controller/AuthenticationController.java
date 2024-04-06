@@ -1,5 +1,6 @@
 package vn.edu.hcmuaf.fit.travie_api.controller;
 
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -35,8 +36,15 @@ public class AuthenticationController {
     }
 
     @PostMapping("/forget-password")
-    public ResponseEntity<HttpResponse> forgetPassword(@RequestParam String email) throws BaseException {
-        authenticationService.forgotPassword(email);
+    public ResponseEntity<HttpResponse> forgetPassword(@RequestParam("email") String email) throws BaseException {
+        authenticationService.forgetPassword(email);
         return ResponseEntity.ok(HttpResponse.success("Gửi mail thành công. Vui lòng kiểm tra email của bạn!"));
+    }
+
+    @PostMapping("/reset-password")
+    public ResponseEntity<HttpResponse> resetPassword(
+            @Valid @RequestBody ResetPasswordRequest request) throws BaseException {
+        authenticationService.resetPassword(request);
+        return ResponseEntity.ok(HttpResponse.success("Đổi mật khẩu thành công!"));
     }
 }

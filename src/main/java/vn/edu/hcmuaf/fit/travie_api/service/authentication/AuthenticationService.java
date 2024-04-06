@@ -13,9 +13,9 @@ public interface AuthenticationService extends UserDetailsService {
 
     void verifyToken(UUID token) throws BaseException;
 
-    void forgotPassword(String email) throws BaseException;
+    void forgetPassword(String email) throws BaseException;
 
-    void resetPassword(UUID token, String newPassword) throws BaseException;
+    void resetPassword(ResetPasswordRequest request) throws BaseException;
 
     String refreshToken(String token) throws BaseException;
 }
