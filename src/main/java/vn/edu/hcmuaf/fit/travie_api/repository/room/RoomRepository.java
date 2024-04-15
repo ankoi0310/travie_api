@@ -6,10 +6,13 @@ import vn.edu.hcmuaf.fit.travie_api.entity.Facility;
 import vn.edu.hcmuaf.fit.travie_api.entity.Room;
 
 import java.util.List;
+import java.util.Optional;
 
 @NoRepositoryBean
 public interface RoomRepository extends CustomRepository<Room, Long> {
     List<Room> findAllByHotelId(Long hotelId);
 
     List<Room> findAllByFacilities(List<Facility> facilities);
+
+    Optional<Room> findByName(String name);
 }

@@ -9,9 +9,9 @@ import lombok.*;
 @AllArgsConstructor
 public class AddressCreate {
     private String detail;
-    private int wardId;
-    private int districtId;
-    private int provinceId;
+    private Long wardId;
+    private Long districtId;
+    private Long provinceId;
 
     @NotBlank
     private String fullAddress;

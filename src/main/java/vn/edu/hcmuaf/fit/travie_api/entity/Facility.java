@@ -25,5 +25,5 @@ public class Facility extends BaseEntity {
     )
     private List<Room> rooms;
 
-    private boolean deleted;
+    private boolean deleted = false;
 }

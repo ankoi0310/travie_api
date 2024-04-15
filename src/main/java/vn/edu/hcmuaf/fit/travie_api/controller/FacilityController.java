@@ -41,9 +41,9 @@ public class FacilityController {
         return ResponseEntity.ok(HttpResponse.success(facilityDTO, "Cập nhật tiện ích thành công"));
     }
 
-    @PutMapping
+    @PutMapping("/status")
     public ResponseEntity<HttpResponse> updateFacilityStatus(@RequestParam long id, @RequestParam boolean enable) throws BaseException {
         facilityService.updateFacilityStatus(id, enable);
-        return ResponseEntity.ok(HttpResponse.success(null, "Cập nhật trạng thái tiện ích thành công"));
+        return ResponseEntity.ok(HttpResponse.success("Cập nhật trạng thái tiện ích thành công"));
     }
 }

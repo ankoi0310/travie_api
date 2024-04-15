@@ -3,7 +3,6 @@ package vn.edu.hcmuaf.fit.travie_api.core.infrastructure.jwt;
 import com.auth0.jwt.JWT;
 import com.auth0.jwt.JWTVerifier;
 import com.auth0.jwt.algorithms.Algorithm;
-import com.auth0.jwt.exceptions.JWTVerificationException;
 import com.auth0.jwt.interfaces.DecodedJWT;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.GrantedAuthority;
@@ -20,10 +19,10 @@ import static java.util.Arrays.stream;
 
 @Component
 public class JwtProvider {
-    @Value("${spring.application.name}")
+    @Value("${app.name}")
     private String applicationName;
 
-    @Value("${spring.application.company}")
+    @Value("${app.company}")
     private String company;
 
     @Value("${jwt.secret}")
@@ -51,14 +50,8 @@ public class JwtProvider {
     }
 
     private JWTVerifier getJwtVerifier() {
-        JWTVerifier verifier;
-        try {
-            Algorithm algorithm = Algorithm.HMAC512(secret);
-            verifier = JWT.require(algorithm).withIssuer(company).build();
-        } catch (JWTVerificationException ex) {
-            throw new JWTVerificationException(SecurityConstant.TOKEN_CANNOT_BE_VERIFIED);
-        }
-        return verifier;
+        Algorithm algorithm = Algorithm.HMAC512(secret);
+        return JWT.require(algorithm).withIssuer(company).build();
     }
 
     private <T> T decodeJWT(

@@ -4,7 +4,6 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.stereotype.Service;
 import vn.edu.hcmuaf.fit.travie_api.core.handler.exception.*;
-import vn.edu.hcmuaf.fit.travie_api.core.infrastructure.media.FileService;
 import vn.edu.hcmuaf.fit.travie_api.dto.facility.*;
 import vn.edu.hcmuaf.fit.travie_api.entity.Facility;
 import vn.edu.hcmuaf.fit.travie_api.mapper.FacilityMapper;
@@ -19,7 +18,6 @@ import java.util.Optional;
 public class FacilityServiceImpl implements FacilityService {
     private final FacilityRepository facilityRepository;
     private final FacilityMapper facilityMapper;
-    private final FileService fileService;
 
     @Override
     public List<FacilityDTO> getAllFacilities() {
