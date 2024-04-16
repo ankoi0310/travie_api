@@ -6,7 +6,7 @@ import vn.edu.hcmuaf.fit.travie_api.dto.room.*;
 import java.util.List;
 
 public interface RoomService {
-    List<RoomDTO> getRooms();
+    List<RoomDTO> search(RoomSearch roomSearch);
 
     List<RoomDTO> getRoomsByHotelId(Long hotelId) throws BaseException;
 

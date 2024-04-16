@@ -6,7 +6,10 @@ import vn.edu.hcmuaf.fit.travie_api.entity.Hotel;
 
 import java.util.List;
 
-@Mapper
+@Mapper(
+        injectionStrategy = InjectionStrategy.CONSTRUCTOR,
+        uses = RoomFacilityMapper.class
+)
 public interface HotelMapper {
     @Named("toDTO")
     HotelDTO toDTO(Hotel hotel);
