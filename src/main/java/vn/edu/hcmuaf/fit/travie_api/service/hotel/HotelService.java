@@ -1,13 +1,12 @@
 package vn.edu.hcmuaf.fit.travie_api.service.hotel;
 
 import vn.edu.hcmuaf.fit.travie_api.core.handler.exception.BaseException;
-import vn.edu.hcmuaf.fit.travie_api.dto.hotel.HotelCreate;
-import vn.edu.hcmuaf.fit.travie_api.dto.hotel.HotelDTO;
+import vn.edu.hcmuaf.fit.travie_api.dto.hotel.*;
 
 import java.util.List;
 
 public interface HotelService {
-    List<HotelDTO> getHotels();
+    List<HotelDTO> search(HotelSearch hotelSearch);
 
     HotelDTO getHotelById(Long id) throws BaseException;
 

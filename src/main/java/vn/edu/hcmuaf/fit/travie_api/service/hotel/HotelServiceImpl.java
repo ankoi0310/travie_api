@@ -5,8 +5,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import vn.edu.hcmuaf.fit.travie_api.core.handler.exception.*;
 import vn.edu.hcmuaf.fit.travie_api.dto.facility.FacilityDTO;
-import vn.edu.hcmuaf.fit.travie_api.dto.hotel.HotelCreate;
-import vn.edu.hcmuaf.fit.travie_api.dto.hotel.HotelDTO;
+import vn.edu.hcmuaf.fit.travie_api.dto.hotel.*;
 import vn.edu.hcmuaf.fit.travie_api.entity.*;
 import vn.edu.hcmuaf.fit.travie_api.mapper.HotelMapper;
 import vn.edu.hcmuaf.fit.travie_api.repository.facility.FacilityRepository;
@@ -26,8 +25,8 @@ public class HotelServiceImpl implements HotelService {
     private final HotelMapper hotelMapper;
 
     @Override
-    public List<HotelDTO> getHotels() {
-        List<Hotel> hotels = hotelRepository.findAll();
+    public List<HotelDTO> search(HotelSearch hotelSearch) {
+        List<Hotel> hotels = hotelRepository.search(hotelSearch);
         return hotelMapper.toDTOs(hotels);
     }
 

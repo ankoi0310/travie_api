@@ -5,8 +5,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import vn.edu.hcmuaf.fit.travie_api.core.handler.domain.HttpResponse;
 import vn.edu.hcmuaf.fit.travie_api.core.handler.exception.BaseException;
-import vn.edu.hcmuaf.fit.travie_api.dto.hotel.HotelCreate;
-import vn.edu.hcmuaf.fit.travie_api.dto.hotel.HotelDTO;
+import vn.edu.hcmuaf.fit.travie_api.dto.hotel.*;
 import vn.edu.hcmuaf.fit.travie_api.service.hotel.HotelService;
 
 import java.util.List;
@@ -17,9 +16,9 @@ import java.util.List;
 public class HotelController {
     private final HotelService hotelService;
 
-    @GetMapping
-    public ResponseEntity<HttpResponse> getHotels() {
-        List<HotelDTO> hotels = hotelService.getHotels();
+    @GetMapping("/search")
+    public ResponseEntity<HttpResponse> search(HotelSearch hotelSearch) {
+        List<HotelDTO> hotels = hotelService.search(hotelSearch);
         return ResponseEntity.ok(HttpResponse.success(hotels, "Get hotels successfully!"));
     }
 
