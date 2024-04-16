@@ -8,14 +8,12 @@ import java.util.List;
 
 @Mapper
 public interface RoomMapper {
-    @Named("toDTO")
-    RoomDTO toDTO(Room room);
+    @Named("toDTOWithoutFacilities")
+    @Mapping(target = "facilities", ignore = true)
+    RoomDTO toDTOWithoutFacilities(Room room);
 
     @Named("toEntity")
     Room toEntity(RoomDTO roomDTO);
-
-    @IterableMapping(qualifiedByName = "toDTO")
-    List<RoomDTO> toDTOs(List<Room> rooms);
 
     @IterableMapping(qualifiedByName = "toEntity")
     List<Room> toEntities(List<RoomDTO> roomDTOs);

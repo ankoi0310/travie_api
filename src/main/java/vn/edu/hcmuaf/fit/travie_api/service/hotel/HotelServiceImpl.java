@@ -3,17 +3,17 @@ package vn.edu.hcmuaf.fit.travie_api.service.hotel;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import vn.edu.hcmuaf.fit.travie_api.core.handler.exception.*;
 import vn.edu.hcmuaf.fit.travie_api.dto.facility.FacilityDTO;
-import vn.edu.hcmuaf.fit.travie_api.dto.hotel.HotelCreate;
-import vn.edu.hcmuaf.fit.travie_api.dto.hotel.HotelDTO;
+import vn.edu.hcmuaf.fit.travie_api.dto.hotel.*;
 import vn.edu.hcmuaf.fit.travie_api.entity.*;
-import vn.edu.hcmuaf.fit.travie_api.mapper.FacilityMapper;
 import vn.edu.hcmuaf.fit.travie_api.mapper.HotelMapper;
 import vn.edu.hcmuaf.fit.travie_api.repository.facility.FacilityRepository;
 import vn.edu.hcmuaf.fit.travie_api.repository.hotel.HotelRepository;
 import vn.edu.hcmuaf.fit.travie_api.repository.room.RoomRepository;
 
 import java.util.List;
+import java.util.Optional;
 
 @Service
 @Transactional
@@ -23,31 +23,43 @@ public class HotelServiceImpl implements HotelService {
     private final RoomRepository roomRepository;
     private final FacilityRepository facilityRepository;
     private final HotelMapper hotelMapper;
-    private final FacilityMapper facilityMapper;
 
     @Override
-    public HotelDTO createHotel(HotelCreate hotelCreate) {
-        // Find a hotel by name
-        hotelRepository.findByName(hotelCreate.getName()).ifPresent(hotel -> {
-            throw new IllegalArgumentException("Hotel name already exists");
-        });
+    public List<HotelDTO> search(HotelSearch hotelSearch) {
+        List<Hotel> hotels = hotelRepository.search(hotelSearch);
+        return hotelMapper.toDTOs(hotels);
+    }
 
-        // Create new address
-        Address newAddress = Address.builder()
-                                    .detail(hotelCreate.getAddress().getDetail())
-                                    .wardId(hotelCreate.getAddress().getWardId())
-                                    .districtId(hotelCreate.getAddress().getDistrictId())
-                                    .provinceId(hotelCreate.getAddress().getProvinceId())
-                                    .fullAddress(hotelCreate.getAddress().getFullAddress())
-                                    .build();
+    @Override
+    public HotelDTO getHotelById(Long id) throws BaseException {
+        Hotel hotel = hotelRepository.findById(id).orElseThrow(() -> new BaseException("Hotel not found"));
+        return hotelMapper.toDTO(hotel);
+    }
 
-        Hotel newHotel = Hotel.builder()
-                              .name(hotelCreate.getName())
-                              .description(hotelCreate.getDescription())
-                              .address(newAddress)
-                              .build();
+    @Override
+    public HotelDTO createHotel(HotelCreate hotelCreate) throws BaseException {
+        try {
+            Optional<Hotel> hotelByName = hotelRepository.findByName(hotelCreate.getName());
+            if (hotelByName.isPresent()) {
+                throw new BadRequestException("Tên khách sạn đã tồn tại");
+            }
 
-        // Get all facility ids and check if they exist
+            // Create new address
+            Address newAddress = Address.builder()
+                                        .detail(hotelCreate.getAddress().getDetail())
+                                        .wardId(hotelCreate.getAddress().getWardId())
+                                        .districtId(hotelCreate.getAddress().getDistrictId())
+                                        .provinceId(hotelCreate.getAddress().getProvinceId())
+                                        .fullAddress(hotelCreate.getAddress().getFullAddress())
+                                        .build();
+
+            Hotel newHotel = Hotel.builder()
+                                  .name(hotelCreate.getName())
+                                  .description(hotelCreate.getDescription())
+                                  .address(newAddress)
+                                  .build();
+
+            // Get all facility ids and check if they exist
 //        List<Long> facilityIds = hotelCreate.getAllFacilityIds();
 //        List<Facility> facilities = facilityRepository.findAllById(facilityIds);
 //
@@ -55,23 +67,39 @@ public class HotelServiceImpl implements HotelService {
 //            throw new IllegalArgumentException("Facility not found");
 //        }
 
-        // Add rooms to newHotel
-        hotelCreate.getRooms().forEach(roomCreate -> {
-            List<Long> facilityIds = roomCreate.getFacilities().stream().mapToLong(FacilityDTO::getId).boxed().toList();
-            List<Facility> facilities = facilityRepository.findAllById(facilityIds);
+            // Add rooms to newHotel
+            hotelCreate.getRooms().forEach(roomCreate -> {
+                List<Long> facilityIds = roomCreate.getFacilities().stream().mapToLong(FacilityDTO::getId).boxed()
+                                                   .toList();
+                List<Facility> facilities = facilityRepository.findAllById(facilityIds);
 
-            Room newRoom = Room.builder()
-                               .name(roomCreate.getName())
-                               .description(roomCreate.getDescription())
-                               .price(roomCreate.getPrice())
-                               .facilities(facilities)
-                               .build();
+                Room newRoom = Room.builder()
+                                   .name(roomCreate.getName())
+                                   .description(roomCreate.getDescription())
+                                   .price(roomCreate.getPrice())
+                                   .facilities(facilities)
+                                   .build();
 
-            roomRepository.save(newRoom);
+                roomRepository.save(newRoom);
 
-            newHotel.addRoom(newRoom);
-        });
+                newHotel.addRoom(newRoom);
+            });
 
-        return hotelMapper.toDTO(hotelRepository.save(newHotel));
+            return hotelMapper.toDTO(hotelRepository.save(newHotel));
+        } catch (BadRequestException e) {
+            throw e;
+        } catch (Exception e) {
+            throw new ServiceBusinessException("Không thể tạo khách sạn");
+        }
+    }
+
+    @Override
+    public HotelDTO updateHotel(Long id, HotelCreate hotelCreate) throws BaseException {
+        return null;
+    }
+
+    @Override
+    public void updateHotelStatus(Long id, boolean status) throws BaseException {
+
     }
 }

@@ -17,13 +17,8 @@ import java.util.List;
 public class Facility extends BaseEntity {
     private String name;
 
-    @ManyToMany(fetch = FetchType.LAZY)
-    @JoinTable(
-            name = "room_facility",
-            joinColumns = @JoinColumn(name = "facility_id"),
-            inverseJoinColumns = @JoinColumn(name = "room_id")
-    )
+    @ManyToMany(fetch = FetchType.LAZY, mappedBy = "facilities")
     private List<Room> rooms;
 
-    private boolean deleted;
+    private boolean deleted = false;
 }
