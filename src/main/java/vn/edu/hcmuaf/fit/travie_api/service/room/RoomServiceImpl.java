@@ -7,7 +7,7 @@ import vn.edu.hcmuaf.fit.travie_api.core.handler.exception.*;
 import vn.edu.hcmuaf.fit.travie_api.dto.facility.FacilityDTO;
 import vn.edu.hcmuaf.fit.travie_api.dto.room.*;
 import vn.edu.hcmuaf.fit.travie_api.entity.*;
-import vn.edu.hcmuaf.fit.travie_api.mapper.RoomMapper;
+import vn.edu.hcmuaf.fit.travie_api.mapper.RoomFacilityMapper;
 import vn.edu.hcmuaf.fit.travie_api.repository.facility.FacilityRepository;
 import vn.edu.hcmuaf.fit.travie_api.repository.hotel.HotelRepository;
 import vn.edu.hcmuaf.fit.travie_api.repository.room.RoomRepository;
@@ -23,12 +23,12 @@ public class RoomServiceImpl implements RoomService {
     private final RoomRepository roomRepository;
     private final FacilityRepository facilityRepository;
 
-    private final RoomMapper roomMapper;
+    private final RoomFacilityMapper mapper;
 
     @Override
-    public List<RoomDTO> getRooms() {
-        List<Room> rooms = roomRepository.findAll();
-        return roomMapper.toDTOs(rooms);
+    public List<RoomDTO> search(RoomSearch roomSearch) {
+        List<Room> rooms = roomRepository.search(roomSearch);
+        return mapper.toRoomDTOs(rooms);
     }
 
     @Override
@@ -37,7 +37,7 @@ public class RoomServiceImpl implements RoomService {
             hotelRepository.findById(hotelId).orElseThrow(() -> new NotFoundException("Hotel not found"));
 
             List<Room> rooms = roomRepository.findAllByHotelId(hotelId);
-            return roomMapper.toDTOs(rooms);
+            return mapper.toRoomDTOs(rooms);
         } catch (NotFoundException e) {
             throw e;
         } catch (Exception e) {
@@ -48,7 +48,7 @@ public class RoomServiceImpl implements RoomService {
     @Override
     public RoomDTO getRoomById(Long id) throws BaseException {
         Room room = roomRepository.findById(id).orElseThrow(() -> new NotFoundException("Room not found"));
-        return roomMapper.toDTO(room);
+        return mapper.toRoomDTO(room);
     }
 
     @Override
@@ -72,8 +72,9 @@ public class RoomServiceImpl implements RoomService {
                                .hotel(hotelById)
                                .facilities(facilities)
                                .build();
-            
-            return roomMapper.toDTO(roomRepository.save(newRoom));
+
+            Room room = roomRepository.save(newRoom);
+            return mapper.toRoomDTO(room);
         } catch (BadRequestException e) {
             throw e;
         } catch (Exception e) {

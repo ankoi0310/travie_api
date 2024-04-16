@@ -18,7 +18,7 @@ public class RoomController {
 
     @RequestMapping
     public ResponseEntity<HttpResponse> getRooms(@RequestBody RoomSearch roomSearch) {
-        List<RoomDTO> rooms = roomService.getRooms();
+        List<RoomDTO> rooms = roomService.search(roomSearch);
         return ResponseEntity.ok(HttpResponse.success(rooms, "Get rooms successfully!"));
     }
 

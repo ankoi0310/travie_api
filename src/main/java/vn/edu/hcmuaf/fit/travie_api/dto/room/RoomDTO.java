@@ -4,6 +4,7 @@ import lombok.*;
 import lombok.experimental.SuperBuilder;
 import vn.edu.hcmuaf.fit.travie_api.core.dto.BaseDTO;
 import vn.edu.hcmuaf.fit.travie_api.dto.facility.FacilityDTO;
+import vn.edu.hcmuaf.fit.travie_api.dto.hotel.HotelDTO;
 
 import java.util.List;
 
@@ -17,5 +18,5 @@ public class RoomDTO extends BaseDTO {
     private String description;
     private int price;
     private List<FacilityDTO> facilities;
-//    private HotelDTO hotel;
+    private HotelDTO hotel;
 }

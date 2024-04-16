@@ -1,7 +1,6 @@
 package vn.edu.hcmuaf.fit.travie_api.mapper;
 
-import org.mapstruct.Mapper;
-import org.mapstruct.Mapping;
+import org.mapstruct.*;
 import vn.edu.hcmuaf.fit.travie_api.dto.facility.FacilityDTO;
 import vn.edu.hcmuaf.fit.travie_api.entity.Facility;
 
@@ -9,11 +8,13 @@ import java.util.List;
 
 @Mapper
 public interface FacilityMapper {
-    FacilityDTO toDTO(Facility facility);
+    @Named("toDTOWithoutRooms")
+    @Mapping(target = "rooms", ignore = true)
+    FacilityDTO toDTOWithoutRooms(Facility facility);
 
+    @Named("toEntity")
     Facility toEntity(FacilityDTO facilityDTO);
 
-    List<FacilityDTO> toDTOs(List<Facility> facilities);
-
+    @IterableMapping(qualifiedByName = "toEntity")
     List<Facility> toEntities(List<FacilityDTO> facilityDTOs);
 }

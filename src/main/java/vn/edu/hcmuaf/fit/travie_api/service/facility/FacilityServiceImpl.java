@@ -6,7 +6,7 @@ import org.springframework.stereotype.Service;
 import vn.edu.hcmuaf.fit.travie_api.core.handler.exception.*;
 import vn.edu.hcmuaf.fit.travie_api.dto.facility.*;
 import vn.edu.hcmuaf.fit.travie_api.entity.Facility;
-import vn.edu.hcmuaf.fit.travie_api.mapper.FacilityMapper;
+import vn.edu.hcmuaf.fit.travie_api.mapper.RoomFacilityMapper;
 import vn.edu.hcmuaf.fit.travie_api.repository.facility.FacilityRepository;
 
 import java.util.List;
@@ -17,17 +17,17 @@ import java.util.Optional;
 @RequiredArgsConstructor
 public class FacilityServiceImpl implements FacilityService {
     private final FacilityRepository facilityRepository;
-    private final FacilityMapper facilityMapper;
+    private final RoomFacilityMapper mapper;
 
     @Override
     public List<FacilityDTO> getAllFacilities() {
-        return facilityMapper.toDTOs(facilityRepository.findAll());
+        return mapper.toFacilityDTOs(facilityRepository.findAll());
     }
 
     @Override
     public FacilityDTO getFacilityById(Long id) throws BaseException {
         return facilityRepository.findById(id)
-                                 .map(facilityMapper::toDTO)
+                                 .map(mapper::toFacilityDTO)
                                  .orElseThrow(() -> new NotFoundException("Không tìm thấy tiện ích"));
     }
 
@@ -43,7 +43,7 @@ public class FacilityServiceImpl implements FacilityService {
 
             facilityRepository.save(newFacility);
 
-            return facilityMapper.toDTO(newFacility);
+            return mapper.toFacilityDTO(newFacility);
         } catch (BadRequestException e) {
             log.error(e);
             throw e;
@@ -67,7 +67,7 @@ public class FacilityServiceImpl implements FacilityService {
             facility.setName(facilityUpdate.getName());
             facilityRepository.save(facility);
 
-            return facilityMapper.toDTO(facility);
+            return mapper.toFacilityDTO(facility);
         } catch (BadRequestException e) {
             log.error(e);
             throw e;
