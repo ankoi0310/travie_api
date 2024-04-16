@@ -9,7 +9,6 @@ import vn.edu.hcmuaf.fit.travie_api.entity.Room;
 import java.util.List;
 
 @Mapper(
-        injectionStrategy = InjectionStrategy.CONSTRUCTOR,
         uses = {RoomMapper.class, FacilityMapper.class}
 )
 public interface RoomFacilityMapper {
@@ -22,7 +21,13 @@ public interface RoomFacilityMapper {
 
     @Named("toRoomDTO")
     @Mapping(target = "facilities", source = "facilities", qualifiedByName = "toDTOWithoutRooms")
+    @Mapping(target = "hotel.rooms", ignore = true)
     RoomDTO toRoomDTO(Room room);
+
+    @Named("toRoomDTOWithoutHotel")
+    @Mapping(target = "facilities", source = "facilities", qualifiedByName = "toDTOWithoutRooms")
+    @Mapping(target = "hotel", ignore = true)
+    RoomDTO toRoomDTOWithoutHotel(Room room);
 
     @IterableMapping(qualifiedByName = "toRoomDTO")
     List<RoomDTO> toRoomDTOs(List<Room> rooms);
