@@ -1,5 +1,7 @@
 INSERT INTO app_role (name)
 VALUES ('ADMIN'),
        ('MANAGER'),
-       ('EMPLOYEE'),
+       ('CONTENT WRITER'),
+       ('CUSTOMER CARE'),
+       ('PARTNER'),
        ('CUSTOMER');

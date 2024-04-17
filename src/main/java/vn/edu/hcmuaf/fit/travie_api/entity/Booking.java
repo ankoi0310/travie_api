@@ -1,26 +1,49 @@
 package vn.edu.hcmuaf.fit.travie_api.entity;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.ManyToOne;
-import jakarta.persistence.Table;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import jakarta.persistence.*;
+import lombok.*;
+import lombok.experimental.SuperBuilder;
 import vn.edu.hcmuaf.fit.travie_api.core.entity.BaseEntity;
+import vn.edu.hcmuaf.fit.travie_api.core.shared.enums.BookingStatus;
+import vn.edu.hcmuaf.fit.travie_api.core.shared.enums.PaymentStatus;
+
+import java.time.LocalDateTime;
 
 @Getter
 @Setter
+@SuperBuilder
 @NoArgsConstructor
 @AllArgsConstructor
 @Entity
 @Table(name = "booking")
 public class Booking extends BaseEntity {
+    @ManyToOne(fetch = FetchType.LAZY)
+    private Room room;
 
-    /**
-     * One hotel can have many bookings
-     * One booking belong to one hotel
-     */
-    @ManyToOne
-    private Hotel hotel;
+//    @ManyToOne(fetch = FetchType.LAZY)
+//    private AppUser user;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    private BookingType type;
+
+    private Integer duration;
+
+    private LocalDateTime checkIn;
+
+    private LocalDateTime checkOut;
+
+    @Column(nullable = false)
+    private int price;
+
+    private int discount;
+
+    private int total;
+
+    private String note;
+
+    @Enumerated(EnumType.STRING)
+    private BookingStatus bookingStatus;
+
+    @Enumerated(EnumType.STRING)
+    private PaymentStatus paymentStatus;
 }

@@ -35,13 +35,13 @@ public class Hotel extends BaseEntity {
 //    @OneToMany(mappedBy = "hotel")
 //    private List<HotelImage> hotelImages;
 
-//    @ManyToMany
-//    @JoinTable(
-//            name = "hotel_booking_type",
-//            joinColumns = @JoinColumn(name = "hotel_id"),
-//            inverseJoinColumns = @JoinColumn(name = "booking_type_id")
-//    )
-//    private List<BookingType> bookingTypes;
+    @ManyToMany
+    @JoinTable(
+            name = "hotel_booking_type",
+            joinColumns = @JoinColumn(name = "hotel_id"),
+            inverseJoinColumns = @JoinColumn(name = "booking_type_id")
+    )
+    private List<BookingType> bookingTypes;
 
 //    @OneToMany(mappedBy = "hotel")
 //    private List<Booking> bookings;

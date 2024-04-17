@@ -1,9 +1,12 @@
 package vn.edu.hcmuaf.fit.travie_api.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import jakarta.persistence.*;
 import lombok.*;
 import lombok.experimental.SuperBuilder;
 import vn.edu.hcmuaf.fit.travie_api.core.entity.BaseEntity;
+import vn.edu.hcmuaf.fit.travie_api.core.shared.enums.TimeUnit;
 
 import java.sql.Time;
 import java.util.List;
@@ -28,6 +31,11 @@ public class BookingType extends BaseEntity {
     private boolean isByDay;
     private boolean isOvernight;
 
+    @Enumerated(EnumType.STRING)
+    private TimeUnit unit;
+
+    @JsonIgnore
+    @JsonIgnoreProperties("bookingType")
     @ManyToMany
     @JoinTable(
             name = "hotel_booking_type",
