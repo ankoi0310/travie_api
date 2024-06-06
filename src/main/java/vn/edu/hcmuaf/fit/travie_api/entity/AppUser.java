@@ -25,16 +25,16 @@ public class AppUser extends BaseEntity implements UserDetails {
     private String password;
 
     @Builder.Default
-    private Boolean emailVerified = false;
+    private boolean emailVerified = false;
 
     @Builder.Default
-    private Boolean phoneVerified = false;
+    private boolean phoneVerified = false;
 
     @Builder.Default
-    private Boolean enabled = false;
+    private boolean enabled = false;
 
     @Builder.Default
-    private Boolean accountNonLocked = true;
+    private boolean accountNonLocked = true;
 
     @OneToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     @JoinColumn(referencedColumnName = "id")

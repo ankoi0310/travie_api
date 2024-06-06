@@ -5,7 +5,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import vn.edu.hcmuaf.fit.travie_api.core.exception.BaseException;
 import vn.edu.hcmuaf.fit.travie_api.dto.user.UserProfileDTO;
-import vn.edu.hcmuaf.fit.travie_api.dto.user.UserProfileUpdate;
+import vn.edu.hcmuaf.fit.travie_api.dto.user.UserProfileRequest;
 import vn.edu.hcmuaf.fit.travie_api.service.UserService;
 
 @RestController
@@ -21,8 +21,8 @@ public class UserController {
     }
 
     @PutMapping("/profile")
-    public ResponseEntity<UserProfileDTO> updateProfile(@RequestBody UserProfileUpdate userProfileUpdate) throws BaseException {
-        UserProfileDTO userProfile = userService.updateProfile(userProfileUpdate);
+    public ResponseEntity<UserProfileDTO> updateProfile(@RequestBody UserProfileRequest userProfileRequest) throws BaseException {
+        UserProfileDTO userProfile = userService.updateProfile(userProfileRequest);
         return ResponseEntity.ok(userProfile);
     }
 }

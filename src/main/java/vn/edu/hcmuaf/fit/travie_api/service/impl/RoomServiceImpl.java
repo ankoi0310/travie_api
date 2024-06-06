@@ -32,16 +32,10 @@ public class RoomServiceImpl implements RoomService {
 
     @Override
     public List<RoomDTO> getRoomsByHotelId(long hotelId) throws BaseException {
-        try {
-            hotelRepository.findById(hotelId).orElseThrow(() -> new NotFoundException("Hotel not found"));
+        hotelRepository.findById(hotelId).orElseThrow(() -> new NotFoundException("Hotel not found"));
 
-            List<Room> rooms = roomRepository.findAllByHotelId(hotelId);
-            return mapper.toRoomDTOs(rooms);
-        } catch (NotFoundException e) {
-            throw e;
-        } catch (Exception e) {
-            throw new ServiceBusinessException("Error when get rooms by hotel id");
-        }
+        List<Room> rooms = roomRepository.findAllByHotelId(hotelId);
+        return mapper.toRoomDTOs(rooms);
     }
 
     @Override
@@ -52,34 +46,22 @@ public class RoomServiceImpl implements RoomService {
 
     @Override
     public RoomDTO createRoom(RoomCreate roomCreate) throws BaseException {
-        try {
-            Optional<Room> roomByName = roomRepository.findByName(roomCreate.getName());
-            if (roomByName.isPresent()) {
-                throw new BadRequestException("Room name already exists");
-            }
-
-            Hotel hotelById = hotelRepository.findById(roomCreate.getHotel().getId())
-                                             .orElseThrow(() -> new NotFoundException("Hotel not found"));
-
-            List<Long> amenityIds = roomCreate.getAmenities().stream().map(AmenityDTO::getId).toList();
-            List<Amenity> amenities = amenityRepository.findAllById(amenityIds);
-
-            Room newRoom = Room.builder()
-                               .name(roomCreate.getName())
-                               .description(roomCreate.getDescription())
-                               .price(roomCreate.getPrice())
-                               .hotel(hotelById)
-                               .amenities(amenities)
-                               .build();
-
-            Room room = roomRepository.save(newRoom);
-            return mapper.toRoomDTO(room);
-        } catch (BadRequestException e) {
-            throw e;
-        } catch (Exception e) {
-            log.error("Error when create room", e);
-            throw new ServiceBusinessException("Error when create room");
+        Optional<Room> roomByName = roomRepository.findByName(roomCreate.getName());
+        if (roomByName.isPresent()) {
+            throw new BadRequestException("Room name already exists");
         }
+
+        Hotel hotelById = hotelRepository.findById(roomCreate.getHotel().getId())
+                                         .orElseThrow(() -> new NotFoundException("Hotel not found"));
+
+        List<Long> amenityIds = roomCreate.getAmenities().stream().map(AmenityDTO::getId).toList();
+        List<Amenity> amenities = amenityRepository.findAllById(amenityIds);
+
+        Room newRoom = Room.builder().name(roomCreate.getName()).description(roomCreate.getDescription())
+                           .price(roomCreate.getPrice()).hotel(hotelById).amenities(amenities).build();
+
+        Room room = roomRepository.save(newRoom);
+        return mapper.toRoomDTO(room);
     }
 
     @Override
@@ -94,14 +76,6 @@ public class RoomServiceImpl implements RoomService {
 
     @Override
     public void deleteRoom(long id) throws BaseException {
-        try {
-            Room room = roomRepository.findById(id).orElseThrow(() -> new NotFoundException("Room not found"));
-
-        } catch (NotFoundException e) {
-            throw e;
-        } catch (Exception e) {
-            log.error("Error when delete room", e);
-            throw new ServiceBusinessException("Error when delete room");
-        }
+        Room room = roomRepository.findById(id).orElseThrow(() -> new NotFoundException("Room not found"));
     }
 }
