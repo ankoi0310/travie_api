@@ -20,4 +20,7 @@ public class BookingRequest {
 
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "HH:mm dd/MM/yyyy", timezone = "Asia/Ho_Chi_Minh")
     private LocalDateTime checkOut;
+
+    private String phone;
+    private String guestName;
 }

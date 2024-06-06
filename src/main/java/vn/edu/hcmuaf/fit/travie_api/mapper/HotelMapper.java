@@ -7,11 +7,12 @@ import vn.edu.hcmuaf.fit.travie_api.entity.Hotel;
 import java.util.List;
 
 @Mapper(
-        uses = {RoomFacilityMapper.class}
+        uses = {RoomMapper.class, AmenityMapper.class, ReviewMapper.class}
 )
 public interface HotelMapper {
     @Named("toDTO")
-    @Mapping(target = "rooms", source = "rooms", qualifiedByName = "toRoomDTOWithoutHotel")
+    @Mapping(target = "rooms", qualifiedByName = "toRoomDTOs")
+    @Mapping(target = "reviews", qualifiedByName = "toReviewDTOs")
     HotelDTO toDTO(Hotel hotel);
 
     @Named("toEntity")

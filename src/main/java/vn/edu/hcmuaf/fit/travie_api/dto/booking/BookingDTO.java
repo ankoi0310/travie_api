@@ -15,7 +15,7 @@ import java.time.LocalDateTime;
 @AllArgsConstructor
 public class BookingDTO {
     @JsonIgnore
-    @JsonIgnoreProperties({"facilities.rooms"})
+    @JsonIgnoreProperties({"amenities.rooms"})
     private Room room;
     private BookingTypeDTO type;
     private Integer duration;
@@ -25,6 +25,9 @@ public class BookingDTO {
 
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "HH:mm dd/MM/yyyy", timezone = "Asia/Ho_Chi_Minh")
     private LocalDateTime checkOut;
+
+    private String phone;
+    private String guestName;
     private int price;
     private int discount;
     private int total;

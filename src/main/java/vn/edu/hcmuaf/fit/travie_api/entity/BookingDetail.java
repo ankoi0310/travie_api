@@ -14,5 +14,5 @@ import vn.edu.hcmuaf.fit.travie_api.core.entity.BaseEntity;
 @Entity
 @Table(name = "booking_detail")
 public class BookingDetail extends BaseEntity {
-    private Booking booking;
+    private Invoice invoice;
 }

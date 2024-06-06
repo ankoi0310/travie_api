@@ -3,10 +3,9 @@ package vn.edu.hcmuaf.fit.travie_api.controller;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import vn.edu.hcmuaf.fit.travie_api.core.handler.domain.HttpResponse;
-import vn.edu.hcmuaf.fit.travie_api.core.handler.exception.BaseException;
+import vn.edu.hcmuaf.fit.travie_api.core.exception.BaseException;
 import vn.edu.hcmuaf.fit.travie_api.dto.hotel.*;
-import vn.edu.hcmuaf.fit.travie_api.service.hotel.HotelService;
+import vn.edu.hcmuaf.fit.travie_api.service.HotelService;
 
 import java.util.List;
 
@@ -17,32 +16,26 @@ public class HotelController {
     private final HotelService hotelService;
 
     @GetMapping("/search")
-    public ResponseEntity<HttpResponse> search(HotelSearch hotelSearch) {
+    public ResponseEntity<List<HotelDTO>> search(HotelSearch hotelSearch) {
         List<HotelDTO> hotels = hotelService.search(hotelSearch);
-        return ResponseEntity.ok(HttpResponse.success(hotels, "Get hotels successfully!"));
+        return ResponseEntity.ok(hotels);
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<HttpResponse> getHotelById(@PathVariable Long id) throws BaseException {
-        HotelDTO hotelDTO = hotelService.getHotelById(id);
-        return ResponseEntity.ok(HttpResponse.success(hotelDTO, "Get hotel by id successfully!"));
+    public ResponseEntity<HotelDTO> getHotelById(@PathVariable long id) throws BaseException {
+        HotelDTO hotel = hotelService.getHotelById(id);
+        return ResponseEntity.ok(hotel);
     }
 
     @PostMapping
-    public ResponseEntity<HttpResponse> createHotel(@RequestBody HotelCreate hotelCreate) throws BaseException {
-        HotelDTO hotelDTO = hotelService.createHotel(hotelCreate);
-        return ResponseEntity.ok(HttpResponse.success(hotelDTO, "Hotel created successfully!"));
+    public ResponseEntity<HotelDTO> createHotel(@RequestBody HotelCreate hotelCreate) throws BaseException {
+        HotelDTO hotel = hotelService.createHotel(hotelCreate);
+        return ResponseEntity.ok(hotel);
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<HttpResponse> updateHotel(@PathVariable Long id, @RequestBody HotelCreate hotelCreate) throws BaseException {
-        HotelDTO hotelDTO = hotelService.updateHotel(id, hotelCreate);
-        return ResponseEntity.ok(HttpResponse.success(hotelDTO, "Hotel updated successfully!"));
-    }
-
-    @PutMapping("/{id}/status")
-    public ResponseEntity<HttpResponse> updateHotelStatus(@PathVariable Long id, @RequestParam boolean status) throws BaseException {
-        hotelService.updateHotelStatus(id, status);
-        return ResponseEntity.ok(HttpResponse.success(null, "Hotel status updated successfully!"));
+    public ResponseEntity<HotelDTO> updateHotel(@PathVariable long id, @RequestBody HotelCreate hotelCreate) throws BaseException {
+        HotelDTO hotel = hotelService.updateHotel(id, hotelCreate);
+        return ResponseEntity.ok(hotel);
     }
 }

@@ -1,12 +1,9 @@
 package vn.edu.hcmuaf.fit.travie_api.dto.room;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import lombok.*;
 import lombok.experimental.SuperBuilder;
 import vn.edu.hcmuaf.fit.travie_api.core.dto.BaseDTO;
-import vn.edu.hcmuaf.fit.travie_api.dto.facility.FacilityDTO;
-import vn.edu.hcmuaf.fit.travie_api.dto.hotel.HotelDTO;
+import vn.edu.hcmuaf.fit.travie_api.dto.amenity.AmenityDTO;
 
 import java.util.List;
 
@@ -19,9 +16,6 @@ public class RoomDTO extends BaseDTO {
     private String name;
     private String description;
     private int price;
-    private List<FacilityDTO> facilities;
-
-    @JsonIgnore
-    @JsonIgnoreProperties({"rooms"})
-    private HotelDTO hotel;
+    private List<AmenityDTO> amenities;
+    private List<RoomImageDTO> roomImages;
 }

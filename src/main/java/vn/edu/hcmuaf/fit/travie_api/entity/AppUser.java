@@ -19,6 +19,7 @@ import java.util.List;
 @Entity
 @Table(name = "app_user")
 public class AppUser extends BaseEntity implements UserDetails {
+    private String username;
     private String email;
     private String phone;
     private String password;
@@ -50,7 +51,7 @@ public class AppUser extends BaseEntity implements UserDetails {
 
     @Override
     public String getUsername() {
-        return email;
+        return username;
     }
 
     @Override

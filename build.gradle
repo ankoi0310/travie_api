@@ -42,20 +42,26 @@ dependencies {
 
     /* mapstruct */
     implementation 'org.mapstruct:mapstruct:1.5.5.Final'
-    implementation 'org.mapstruct.extensions.spring:mapstruct-spring-annotations:1.1.1'
-    implementation 'org.mapstruct.extensions.spring:mapstruct-spring-test-extensions:1.1.1'
 
     /* jwt */
-    implementation 'com.auth0:java-jwt:4.4.0'
+    implementation 'io.jsonwebtoken:jjwt-api:0.12.5'
+    runtimeOnly 'io.jsonwebtoken:jjwt-impl:0.12.5'
+    runtimeOnly 'io.jsonwebtoken:jjwt-jackson:0.12.5'
 
     /* gson */
     implementation 'com.google.code.gson:gson'
 
+    /* utils */
     implementation 'org.apache.commons:commons-lang3'
 
     /* firebase */
     implementation 'com.google.guava:guava:33.1.0-jre'
     implementation 'com.google.firebase:firebase-admin:9.2.0'
+
+    /* http */
+    implementation 'org.apache.httpcomponents.client5:httpclient5:5.3.1'
+    implementation 'org.apache.httpcomponents.core5:httpcore5:5.2.4'
+    implementation 'org.apache.httpcomponents.client5:httpclient5-fluent:5.3.1'
 
     compileOnly 'org.projectlombok:lombok'
     developmentOnly 'org.springframework.boot:spring-boot-devtools'

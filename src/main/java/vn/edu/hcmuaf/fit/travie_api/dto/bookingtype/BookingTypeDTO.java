@@ -6,7 +6,7 @@ import lombok.experimental.SuperBuilder;
 import vn.edu.hcmuaf.fit.travie_api.core.dto.BaseDTO;
 import vn.edu.hcmuaf.fit.travie_api.core.shared.enums.TimeUnit;
 
-import java.sql.Time;
+import java.time.LocalTime;
 
 @Data
 @SuperBuilder
@@ -18,14 +18,10 @@ public class BookingTypeDTO extends BaseDTO {
     private String description;
 
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "HH:mm")
-    private Time checkInTime;
+    private LocalTime startTime;
 
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "HH:mm")
-    private Time checkOutTime;
-
-    private boolean isHourly;
-    private boolean isByDay;
-    private boolean isOvernight;
+    private LocalTime endTime;
 
     private TimeUnit unit;
 }
