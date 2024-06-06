@@ -1,6 +1,7 @@
 package vn.edu.hcmuaf.fit.travie_api.core.config.jwt;
 
-import com.auth0.jwt.exceptions.JWTVerificationException;
+import io.jsonwebtoken.ExpiredJwtException;
+import io.jsonwebtoken.MalformedJwtException;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
@@ -16,7 +17,7 @@ import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
 import vn.edu.hcmuaf.fit.travie_api.core.infrastructure.jwt.JwtProvider;
 import vn.edu.hcmuaf.fit.travie_api.core.shared.constants.SecurityConstant;
-import vn.edu.hcmuaf.fit.travie_api.service.authentication.AuthenticationService;
+import vn.edu.hcmuaf.fit.travie_api.service.AuthenticationService;
 
 import java.io.IOException;
 
@@ -40,17 +41,15 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
         if (request.getMethod().equalsIgnoreCase(HttpMethod.OPTIONS.name())) {
             response.setStatus(HttpStatus.OK.value());
         } else {
+            String authHeader = request.getHeader(HttpHeaders.AUTHORIZATION);
+            if (authHeader == null || !authHeader.startsWith(SecurityConstant.TOKEN_PREFIX)) {
+                filterChain.doFilter(request, response);
+                return;
+            }
+
             try {
-
-                final String authHeader = request.getHeader(HttpHeaders.AUTHORIZATION);
-                final String token;
-                if (authHeader == null || !authHeader.startsWith(SecurityConstant.TOKEN_PREFIX)) {
-                    filterChain.doFilter(request, response);
-                    return;
-                }
-
-                token = authHeader.substring(7);
-                String username = jwtProvider.getUsername(token);
+                String token = authHeader.substring(7);
+                String username = jwtProvider.getUsernameFromJWT(token);
 
                 if (username != null && SecurityContextHolder.getContext().getAuthentication() == null) {
                     UserDetails userDetails = authenticationService.loadUserByUsername(username);
@@ -62,16 +61,21 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
                                 userDetails.getAuthorities()
                         );
                         authToken.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
-
                         SecurityContextHolder.getContext().setAuthentication(authToken);
-
                     } else {
                         SecurityContextHolder.clearContext();
                     }
                 }
-            } catch (JWTVerificationException e) {
-                SecurityContextHolder.clearContext();
-
+            } catch (ExpiredJwtException e) {
+                response.sendError(HttpStatus.UNAUTHORIZED.value(), SecurityConstant.EXPIRED_TOKEN_MESSAGE);
+                return;
+            } catch (MalformedJwtException e) {
+                response.sendError(HttpStatus.UNAUTHORIZED.value(), SecurityConstant.INVALID_TOKEN_MESSAGE);
+                return;
+            } catch (Exception e) {
+                response.sendError(HttpStatus.UNAUTHORIZED.value(),
+                        SecurityConstant.TOKEN_CANNOT_BE_VERIFIED);
+                return;
             }
         }
         filterChain.doFilter(request, response);

@@ -19,14 +19,18 @@ public class Room extends BaseEntity {
     private String description;
     private int price;
 
-    @ManyToMany(fetch = FetchType.LAZY, cascade = CascadeType.PERSIST)
+    @ManyToMany(cascade = CascadeType.PERSIST)
     @JoinTable(
-            name = "room_facility",
+            name = "room_amenity",
             joinColumns = @JoinColumn(name = "room_id"),
-            inverseJoinColumns = @JoinColumn(name = "facility_id")
+            inverseJoinColumns = @JoinColumn(name = "amenity_id")
     )
-    private List<Facility> facilities;
+    private List<Amenity> amenities;
 
-    @ManyToOne
+    @OneToMany(mappedBy = "room")
+    private List<RoomImage> roomImages;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "hotel_id")
     private Hotel hotel;
 }

@@ -5,7 +5,7 @@ import jakarta.validation.constraints.NotNull;
 import lombok.*;
 import lombok.experimental.SuperBuilder;
 import vn.edu.hcmuaf.fit.travie_api.dto.address.AddressCreate;
-import vn.edu.hcmuaf.fit.travie_api.dto.facility.FacilityDTO;
+import vn.edu.hcmuaf.fit.travie_api.dto.amenity.AmenityDTO;
 import vn.edu.hcmuaf.fit.travie_api.dto.room.RoomCreate;
 
 import java.util.List;
@@ -19,7 +19,7 @@ public class HotelCreate {
     @NotBlank
     private String name;
 
-    private String description;
+    private String introduction;
 
     @NotNull
     private AddressCreate address;
@@ -28,10 +28,10 @@ public class HotelCreate {
 
     private List<RoomCreate> rooms;
 
-    public List<Long> getAllFacilityIds() {
+    public List<Long> getAllAmenityIds() {
         return rooms.stream()
-                    .flatMap(room -> room.getFacilities().stream())
-                    .map(FacilityDTO::getId)
+                    .flatMap(room -> room.getAmenities().stream())
+                    .map(AmenityDTO::getId)
                     .collect(Collectors.toList());
     }
 }

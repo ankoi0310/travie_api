@@ -4,9 +4,9 @@ import jakarta.persistence.*;
 import lombok.*;
 import lombok.experimental.SuperBuilder;
 import vn.edu.hcmuaf.fit.travie_api.core.entity.BaseEntity;
+import vn.edu.hcmuaf.fit.travie_api.core.shared.enums.TimeUnit;
 
-import java.sql.Time;
-import java.util.List;
+import java.time.LocalTime;
 
 @Getter
 @Setter
@@ -20,19 +20,14 @@ public class BookingType extends BaseEntity {
     private String description;
 
     @Temporal(TemporalType.TIME)
-    private Time checkInTime;
+    private LocalTime startTime;
 
     @Temporal(TemporalType.TIME)
-    private Time checkOutTime;
-    private boolean isHourly;
-    private boolean isByDay;
-    private boolean isOvernight;
+    private LocalTime endTime;
 
-    @ManyToMany
-    @JoinTable(
-            name = "hotel_booking_type",
-            joinColumns = @JoinColumn(name = "booking_type_id"),
-            inverseJoinColumns = @JoinColumn(name = "hotel_id")
-    )
-    private List<Hotel> hotels;
+    @Enumerated(EnumType.STRING)
+    private TimeUnit unit;
+
+    @ManyToOne
+    private Hotel hotel;
 }

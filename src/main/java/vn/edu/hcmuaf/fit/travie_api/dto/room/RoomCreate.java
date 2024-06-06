@@ -3,7 +3,7 @@ package vn.edu.hcmuaf.fit.travie_api.dto.room;
 import jakarta.validation.constraints.*;
 import lombok.*;
 import lombok.experimental.SuperBuilder;
-import vn.edu.hcmuaf.fit.travie_api.dto.facility.FacilityDTO;
+import vn.edu.hcmuaf.fit.travie_api.dto.amenity.AmenityDTO;
 import vn.edu.hcmuaf.fit.travie_api.dto.hotel.HotelDTO;
 
 import java.util.List;
@@ -27,5 +27,5 @@ public class RoomCreate {
     private HotelDTO hotel;
 
     @NotEmpty
-    private List<@NotNull FacilityDTO> facilities;
+    private List<@NotNull AmenityDTO> amenities;
 }

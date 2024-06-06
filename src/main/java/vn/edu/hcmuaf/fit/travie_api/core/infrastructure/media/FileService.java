@@ -6,7 +6,7 @@ import lombok.extern.log4j.Log4j2;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
-import vn.edu.hcmuaf.fit.travie_api.core.handler.exception.ServiceBusinessException;
+import vn.edu.hcmuaf.fit.travie_api.core.exception.ServiceBusinessException;
 import vn.edu.hcmuaf.fit.travie_api.core.shared.enums.MediaType;
 
 import java.io.File;

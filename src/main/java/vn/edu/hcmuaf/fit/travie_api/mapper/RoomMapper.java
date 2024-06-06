@@ -6,15 +6,16 @@ import vn.edu.hcmuaf.fit.travie_api.entity.Room;
 
 import java.util.List;
 
-@Mapper
+@Mapper(
+        uses = {AmenityMapper.class, RoomImageMapper.class}
+)
 public interface RoomMapper {
-    @Named("toDTOWithoutFacilities")
-    @Mapping(target = "facilities", ignore = true)
-    RoomDTO toDTOWithoutFacilities(Room room);
+    @Named("toRoomDTO")
+    @Mapping(target = "amenities", qualifiedByName = "toAmenityDTOs")
+    @Mapping(target = "roomImages", qualifiedByName = "toRoomImageDTOs")
+    RoomDTO toRoomDTO(Room room);
 
-    @Named("toEntity")
-    Room toEntity(RoomDTO roomDTO);
-
-    @IterableMapping(qualifiedByName = "toEntity")
-    List<Room> toEntities(List<RoomDTO> roomDTOs);
+    @Named("toRoomDTOs")
+    @IterableMapping(qualifiedByName = "toRoomDTO")
+    List<RoomDTO> toRoomDTOs(List<Room> rooms);
 }
