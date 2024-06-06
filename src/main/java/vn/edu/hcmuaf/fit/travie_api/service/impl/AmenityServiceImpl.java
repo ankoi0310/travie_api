@@ -35,61 +35,40 @@ public class AmenityServiceImpl implements AmenityService {
 
     @Override
     public AmenityDTO createAmenity(AmenityCreate amenityCreate) throws BaseException {
-        try {
-            amenityRepository.findByName(amenityCreate.getName())
-                             .orElseThrow(() -> new BadRequestException("Tiện ích đã tồn tại"));
+        amenityRepository.findByName(amenityCreate.getName())
+                         .orElseThrow(() -> new BadRequestException("Tiện ích đã tồn tại"));
 
-            Amenity newAmenity = Amenity.builder()
-                                        .name(amenityCreate.getName())
-                                        .build();
+        Amenity newAmenity = Amenity.builder()
+                                    .name(amenityCreate.getName())
+                                    .build();
 
-            amenityRepository.save(newAmenity);
+        amenityRepository.save(newAmenity);
 
-            return mapper.toAmenityDTO(newAmenity);
-        } catch (BadRequestException e) {
-            log.error(e);
-            throw e;
-        } catch (Exception e) {
-            log.error(e);
-            throw new ServiceBusinessException("Xảy ra lỗi khi tạo tiện ích.");
-        }
+        return mapper.toAmenityDTO(newAmenity);
     }
 
     @Override
     public AmenityDTO updateAmenity(AmenityUpdate amenityUpdate) throws BaseException {
-        try {
-            Amenity amenity = amenityRepository.findById(amenityUpdate.getId())
-                                               .orElseThrow(() -> new NotFoundException("Không tìm thấy tiện ích"));
+        Amenity amenity = amenityRepository.findById(amenityUpdate.getId())
+                                           .orElseThrow(() -> new NotFoundException("Không tìm thấy tiện ích"));
 
-            Optional<Amenity> amenityByName = amenityRepository.findByName(amenityUpdate.getName());
-            if (amenityByName.isPresent() && amenityByName.get().getId() != amenityUpdate.getId()) {
-                throw new BadRequestException("Tiện ích đã tồn tại");
-            }
-
-            amenity.setName(amenityUpdate.getName());
-            amenityRepository.save(amenity);
-
-            return mapper.toAmenityDTO(amenity);
-        } catch (BadRequestException e) {
-            log.error(e);
-            throw e;
-        } catch (Exception e) {
-            log.error(e);
-            throw new ServiceBusinessException("Xảy ra lỗi khi cập nhật tiện ích.");
+        Optional<Amenity> amenityByName = amenityRepository.findByName(amenityUpdate.getName());
+        if (amenityByName.isPresent() && amenityByName.get().getId() != amenityUpdate.getId()) {
+            throw new BadRequestException("Tiện ích đã tồn tại");
         }
+
+        amenity.setName(amenityUpdate.getName());
+        amenityRepository.save(amenity);
+
+        return mapper.toAmenityDTO(amenity);
     }
 
     @Override
     public void updateAmenityStatus(long id, boolean delete) throws BaseException {
-        try {
-            Amenity amenity = amenityRepository.findById(id)
-                                               .orElseThrow(() -> new NotFoundException("Không tìm thấy tiện ích"));
+        Amenity amenity = amenityRepository.findById(id)
+                                           .orElseThrow(() -> new NotFoundException("Không tìm thấy tiện ích"));
 
-            amenity.setDeleted(delete);
-            amenityRepository.save(amenity);
-        } catch (Exception e) {
-            log.error(e);
-            throw new ServiceBusinessException("Xảy ra lỗi khi cập nhật trạng thái tiện ích.");
-        }
+        amenity.setDeleted(delete);
+        amenityRepository.save(amenity);
     }
 }

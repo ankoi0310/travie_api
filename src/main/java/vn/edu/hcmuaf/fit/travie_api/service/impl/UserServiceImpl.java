@@ -10,7 +10,7 @@ import vn.edu.hcmuaf.fit.travie_api.core.exception.BaseException;
 import vn.edu.hcmuaf.fit.travie_api.core.exception.NotFoundException;
 import vn.edu.hcmuaf.fit.travie_api.core.shared.utils.AppUtil;
 import vn.edu.hcmuaf.fit.travie_api.dto.user.UserProfileDTO;
-import vn.edu.hcmuaf.fit.travie_api.dto.user.UserProfileUpdate;
+import vn.edu.hcmuaf.fit.travie_api.dto.user.UserProfileRequest;
 import vn.edu.hcmuaf.fit.travie_api.entity.AppUser;
 import vn.edu.hcmuaf.fit.travie_api.mapper.UserMapper;
 import vn.edu.hcmuaf.fit.travie_api.repository.UserRepository;
@@ -30,69 +30,59 @@ public class UserServiceImpl implements UserService {
     @Override
     public UserProfileDTO getProfile() throws BaseException {
         try {
-            String email = AppUtil.getCurrentEmail();
-            return userRepository.findByEmail(email)
-                                 .map(userMapper::toProfileDTO)
-                                 .orElseThrow(() -> new NotFoundException("Không tìm thấy thông tin người dùng!"));
+            String email = AppUtil.getCurrentUsername();
+
+            AppUser user = userRepository.findByEmail(email)
+                                         .orElseThrow(() -> new NotFoundException("Người dùng không tồn tại!"));
+
+            return userMapper.toUserProfileDTO(user);
         } catch (NotFoundException e) {
-            log.error(e.getMessage());
             throw e;
         } catch (Exception e) {
-            log.error(e.getMessage());
-            throw new BaseException("Lỗi không xác định!");
+            throw new BaseException("Lỗi khi lấy thông tin người dùng!");
         }
     }
 
     @Override
-    public UserProfileDTO updateProfile(UserProfileUpdate userProfileUpdate) throws BaseException {
+    public UserProfileDTO updateProfile(UserProfileRequest request) throws BaseException {
         try {
-            String email = AppUtil.getCurrentEmail();
-            AppUser user = userRepository.findByEmail(email)
-                                         .orElseThrow(() -> new NotFoundException("Không tìm thấy thông tin người " +
-                                                 "dùng!"));
+            String email = AppUtil.getCurrentUsername();
 
-            user.getUserInfo().setFullName(userProfileUpdate.getFullName());
-            user.getUserInfo().setGender(userProfileUpdate.getGender());
-            user.getUserInfo().setBirthday(userProfileUpdate.getBirthday());
+            AppUser user = userRepository.findByEmail(email)
+                                         .orElseThrow(() -> new NotFoundException("Người dùng không tồn tại!"));
+
+            if (!user.isPhoneVerified() && !request.getPhone().equals(user.getPhone())) {
+                user.setPhone(request.getPhone());
+            }
+
+            if (!request.getFullName().equals(user.getUserInfo().getFullName())) {
+                user.getUserInfo().setFullName(request.getFullName());
+            }
 
             userRepository.save(user);
-            return userMapper.toProfileDTO(user);
+
+            return userMapper.toUserProfileDTO(user);
         } catch (NotFoundException e) {
-            log.error(e.getMessage());
             throw e;
         } catch (Exception e) {
-            log.error(e.getMessage());
-            throw new BaseException("Lỗi không xác định!");
+            throw new BaseException("Lỗi khi cập nhật thông tin người dùng!");
         }
     }
 
     @Override
     public void updateAvatar(MultipartFile avatar) throws BaseException {
-        try {
-            String email = AppUtil.getCurrentEmail();
-            AppUser user = userRepository.findByEmail(email)
-                                         .orElseThrow(() -> new NotFoundException("Không tìm thấy thông tin người " +
-                                                 "dùng!"));
+        String email = AppUtil.getCurrentUsername();
+        AppUser user = userRepository.findByEmail(email)
+                                     .orElseThrow(() -> new NotFoundException("Không tìm thấy thông tin người " +
+                                             "dùng!"));
 
-            userRepository.save(user);
-        } catch (NotFoundException e) {
-            log.error(e.getMessage());
-            throw e;
-        } catch (Exception e) {
-            log.error(e.getMessage());
-            throw new BaseException("Lỗi không xác định!");
-        }
+        userRepository.save(user);
     }
 
     @Override
     public void changePassword(String oldPassword, String newPassword) throws BaseException {
-        try {
-            String email = AppUtil.getCurrentEmail();
+        String email = AppUtil.getCurrentUsername();
 
 
-        } catch (Exception e) {
-            log.error(e.getMessage());
-            throw new BaseException("Lỗi không xác định!");
-        }
     }
 }

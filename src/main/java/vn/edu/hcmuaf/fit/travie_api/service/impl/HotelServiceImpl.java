@@ -3,7 +3,8 @@ package vn.edu.hcmuaf.fit.travie_api.service.impl;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import vn.edu.hcmuaf.fit.travie_api.core.exception.*;
+import vn.edu.hcmuaf.fit.travie_api.core.exception.BadRequestException;
+import vn.edu.hcmuaf.fit.travie_api.core.exception.BaseException;
 import vn.edu.hcmuaf.fit.travie_api.dto.amenity.AmenityDTO;
 import vn.edu.hcmuaf.fit.travie_api.dto.hotel.*;
 import vn.edu.hcmuaf.fit.travie_api.entity.*;
@@ -37,28 +38,22 @@ public class HotelServiceImpl implements HotelService {
 
     @Override
     public HotelDTO createHotel(HotelCreate hotelCreate) throws BaseException {
-        try {
-            Optional<Hotel> hotelByName = hotelRepository.findByName(hotelCreate.getName());
-            if (hotelByName.isPresent()) {
-                throw new BadRequestException("Tên khách sạn đã tồn tại");
-            }
+        Optional<Hotel> hotelByName = hotelRepository.findByName(hotelCreate.getName());
+        if (hotelByName.isPresent()) {
+            throw new BadRequestException("Tên khách sạn đã tồn tại");
+        }
 
-            // Create new address
-            Address newAddress = Address.builder()
-                                        .detail(hotelCreate.getAddress().getDetail())
-                                        .wardId(hotelCreate.getAddress().getWardId())
-                                        .districtId(hotelCreate.getAddress().getDistrictId())
-                                        .provinceId(hotelCreate.getAddress().getProvinceId())
-                                        .fullAddress(hotelCreate.getAddress().getFullAddress())
-                                        .build();
+        // Create new address
+        Address newAddress = Address.builder().detail(hotelCreate.getAddress().getDetail())
+                                    .wardId(hotelCreate.getAddress().getWardId())
+                                    .districtId(hotelCreate.getAddress().getDistrictId())
+                                    .provinceId(hotelCreate.getAddress().getProvinceId())
+                                    .fullAddress(hotelCreate.getAddress().getFullAddress()).build();
 
-            Hotel newHotel = Hotel.builder()
-                                  .name(hotelCreate.getName())
-                                  .introduction(hotelCreate.getIntroduction())
-                                  .address(newAddress)
-                                  .build();
+        Hotel newHotel = Hotel.builder().name(hotelCreate.getName()).introduction(hotelCreate.getIntroduction())
+                              .address(newAddress).build();
 
-            // Get all amenity ids and check if they exist
+        // Get all amenity ids and check if they exist
 //        List<long> amenityIds = hotelCreate.getAllAmenityIds();
 //        List<Amenity> amenities = amenityRepository.findAllById(amenityIds);
 //
@@ -66,30 +61,20 @@ public class HotelServiceImpl implements HotelService {
 //            throw new IllegalArgumentException("Amenity not found");
 //        }
 
-            // Add rooms to newHotel
-            hotelCreate.getRooms().forEach(roomCreate -> {
-                List<Long> amenityIds = roomCreate.getAmenities().stream().mapToLong(AmenityDTO::getId).boxed()
-                                                  .toList();
-                List<Amenity> amenities = amenityRepository.findAllById(amenityIds);
+        // Add rooms to newHotel
+        hotelCreate.getRooms().forEach(roomCreate -> {
+            List<Long> amenityIds = roomCreate.getAmenities().stream().mapToLong(AmenityDTO::getId).boxed().toList();
+            List<Amenity> amenities = amenityRepository.findAllById(amenityIds);
 
-                Room newRoom = Room.builder()
-                                   .name(roomCreate.getName())
-                                   .description(roomCreate.getDescription())
-                                   .price(roomCreate.getPrice())
-                                   .amenities(amenities)
-                                   .build();
+            Room newRoom = Room.builder().name(roomCreate.getName()).description(roomCreate.getDescription())
+                               .price(roomCreate.getPrice()).amenities(amenities).build();
 
-                roomRepository.save(newRoom);
+            roomRepository.save(newRoom);
 
-                newHotel.addRoom(newRoom);
-            });
+            newHotel.addRoom(newRoom);
+        });
 
-            return hotelMapper.toDTO(hotelRepository.save(newHotel));
-        } catch (BadRequestException e) {
-            throw e;
-        } catch (Exception e) {
-            throw new ServiceBusinessException("Không thể tạo khách sạn");
-        }
+        return hotelMapper.toDTO(hotelRepository.save(newHotel));
     }
 
     @Override

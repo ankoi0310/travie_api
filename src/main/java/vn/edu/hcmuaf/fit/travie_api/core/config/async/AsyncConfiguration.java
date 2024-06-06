@@ -6,13 +6,13 @@ import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
 
 @Configuration
 public class AsyncConfiguration {
-    @Bean(name = "threadPoolTaskExecutorForVerificationMail")
-    public ThreadPoolTaskExecutor threadPoolTaskExecutorForVerificationMail() {
+    @Bean(name = "sendOTP")
+    public ThreadPoolTaskExecutor sendOTP() {
         ThreadPoolTaskExecutor executor = new ThreadPoolTaskExecutor();
         executor.setCorePoolSize(2);
         executor.setMaxPoolSize(2);
         executor.setQueueCapacity(500);
-        executor.setThreadNamePrefix("threadPoolTaskExecutorForVerificationMail-");
+        executor.setThreadNamePrefix("sendOTP-");
         executor.initialize();
         return executor;
     }
