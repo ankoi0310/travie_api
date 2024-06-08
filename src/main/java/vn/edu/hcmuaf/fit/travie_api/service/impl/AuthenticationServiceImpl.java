@@ -189,7 +189,7 @@ public class AuthenticationServiceImpl implements AuthenticationService {
 
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-        Optional<AppUser> appUser = userRepository.findByEmail(username);
+        Optional<AppUser> appUser = userRepository.findByUsername(username);
         if (appUser.isEmpty()) {
             throw new UsernameNotFoundException("Không tìm thấy tài khoản");
         }

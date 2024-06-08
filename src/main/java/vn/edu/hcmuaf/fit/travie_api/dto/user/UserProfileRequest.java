@@ -6,7 +6,7 @@ import lombok.Data;
 import vn.edu.hcmuaf.fit.travie_api.core.infrastructure.annotation.Phone;
 import vn.edu.hcmuaf.fit.travie_api.core.shared.enums.Gender;
 
-import java.util.Date;
+import java.time.LocalDate;
 
 @Data
 public class UserProfileRequest {
@@ -20,5 +20,5 @@ public class UserProfileRequest {
 
     @NotBlank
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "dd-MM-yyyy", timezone = "Asia/Ho_Chi_Minh")
-    private Date birthday;
+    private LocalDate birthday;
 }

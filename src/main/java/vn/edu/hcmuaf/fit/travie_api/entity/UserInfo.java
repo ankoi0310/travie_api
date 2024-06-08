@@ -6,7 +6,7 @@ import lombok.experimental.SuperBuilder;
 import vn.edu.hcmuaf.fit.travie_api.core.entity.BaseEntity;
 import vn.edu.hcmuaf.fit.travie_api.core.shared.enums.Gender;
 
-import java.util.Date;
+import java.time.LocalDate;
 
 @Getter
 @Setter
@@ -23,7 +23,7 @@ public class UserInfo extends BaseEntity {
     private Gender gender;
 
     @Temporal(TemporalType.DATE)
-    private Date birthday;
+    private LocalDate birthday;
     private String avatar;
 
     @OneToOne(mappedBy = "userInfo")

@@ -30,9 +30,10 @@ public class UserServiceImpl implements UserService {
     @Override
     public UserProfileDTO getProfile() throws BaseException {
         try {
-            String email = AppUtil.getCurrentUsername();
+            String username = AppUtil.getCurrentUsername();
+            System.out.println("username: " + username);
 
-            AppUser user = userRepository.findByEmail(email)
+            AppUser user = userRepository.findByUsername(username)
                                          .orElseThrow(() -> new NotFoundException("Người dùng không tồn tại!"));
 
             return userMapper.toUserProfileDTO(user);
@@ -46,9 +47,9 @@ public class UserServiceImpl implements UserService {
     @Override
     public UserProfileDTO updateProfile(UserProfileRequest request) throws BaseException {
         try {
-            String email = AppUtil.getCurrentUsername();
+            String username = AppUtil.getCurrentUsername();
 
-            AppUser user = userRepository.findByEmail(email)
+            AppUser user = userRepository.findByUsername(username)
                                          .orElseThrow(() -> new NotFoundException("Người dùng không tồn tại!"));
 
             if (!user.isPhoneVerified() && !request.getPhone().equals(user.getPhone())) {
@@ -71,8 +72,8 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public void updateAvatar(MultipartFile avatar) throws BaseException {
-        String email = AppUtil.getCurrentUsername();
-        AppUser user = userRepository.findByEmail(email)
+        String username = AppUtil.getCurrentUsername();
+        AppUser user = userRepository.findByUsername(username)
                                      .orElseThrow(() -> new NotFoundException("Không tìm thấy thông tin người " +
                                              "dùng!"));
 
