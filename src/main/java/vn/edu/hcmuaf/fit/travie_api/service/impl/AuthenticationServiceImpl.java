@@ -14,7 +14,6 @@ import vn.edu.hcmuaf.fit.travie_api.core.infrastructure.jwt.JwtProvider;
 import vn.edu.hcmuaf.fit.travie_api.core.infrastructure.mail.MailService;
 import vn.edu.hcmuaf.fit.travie_api.core.shared.constants.AppConstant;
 import vn.edu.hcmuaf.fit.travie_api.core.shared.enums.otp.OTPType;
-import vn.edu.hcmuaf.fit.travie_api.core.shared.utils.AppUtil;
 import vn.edu.hcmuaf.fit.travie_api.dto.auth.*;
 import vn.edu.hcmuaf.fit.travie_api.entity.*;
 import vn.edu.hcmuaf.fit.travie_api.repository.AppRoleRepository;
@@ -152,17 +151,29 @@ public class AuthenticationServiceImpl implements AuthenticationService {
     }
 
     @Override
-    public RefreshTokenResponse refreshToken() throws BaseException {
+    public RefreshTokenResponse refreshToken(RefreshTokenRequest request) throws BaseException {
         try {
-            String username = AppUtil.getCurrentUsername();
+            String refreshToken = request.getRefreshToken();
 
+            // Validate refresh token
+            if (!jwtProvider.validateToken(refreshToken)) {
+                throw new BadRequestException("Refresh token không hợp lệ");
+            }
+
+            // Extract username from refresh token
+            String username = jwtProvider.getUsernameFromJWT(refreshToken);
+
+            // Load user details
             UserDetails userDetails = loadUserByUsername(username);
+
+            // Create new authentication
             Authentication authentication = new UsernamePasswordAuthenticationToken(
                     userDetails,
                     null,
                     userDetails.getAuthorities()
             );
 
+            // Generate new access token
             String newAccessToken = jwtProvider.generateAccessToken(authentication);
 
             // Generate new refresh token

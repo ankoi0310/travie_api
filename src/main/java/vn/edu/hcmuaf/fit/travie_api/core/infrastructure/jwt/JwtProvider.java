@@ -65,6 +65,15 @@ public class JwtProvider {
                    .signWith(getSecretKey());
     }
 
+    public boolean validateToken(String token) {
+        try {
+            Jwts.parser().verifyWith(getSecretKey()).build().parseSignedClaims(token);
+            return true;
+        } catch (JwtException e) {
+            return false;
+        }
+    }
+
     public boolean isTokenValid(String token, UserDetails userDetails) {
         String username = getUsernameFromJWT(token);
         return username.equals(userDetails.getUsername()) && !isTokenExpired(token);

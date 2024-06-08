@@ -11,7 +11,7 @@ public interface AuthenticationService extends UserDetailsService {
 
     LoginResponse login(LoginRequest loginRequest) throws BaseException;
 
-    RefreshTokenResponse refreshToken() throws BaseException;
+    RefreshTokenResponse refreshToken(RefreshTokenRequest request) throws BaseException;
 
     void forgotPassword(String email) throws BaseException;
 

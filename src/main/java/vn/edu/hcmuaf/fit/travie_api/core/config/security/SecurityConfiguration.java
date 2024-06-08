@@ -14,6 +14,7 @@ import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.springframework.web.cors.*;
 import vn.edu.hcmuaf.fit.travie_api.core.config.jwt.JwtAuthenticationFilter;
+import vn.edu.hcmuaf.fit.travie_api.core.shared.constants.SecurityConstant;
 
 import java.util.List;
 
@@ -29,12 +30,13 @@ public class SecurityConfiguration {
 
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
-        http.csrf(AbstractHttpConfigurer::disable)
-            .cors(cors -> cors.configurationSource(corsConfigurationSource()))
-            .authorizeHttpRequests(authorizeRequests -> {
-//                authorizeRequests.requestMatchers(SecurityConstant.AUTHENTICATED_URLS).fullyAuthenticated();
-                authorizeRequests.requestMatchers("/**").permitAll();
-//                authorizeRequests.anyRequest().authenticated();
+        http.csrf(AbstractHttpConfigurer::disable).cors(cors -> cors.configurationSource(corsConfigurationSource()))
+            .authorizeHttpRequests(req -> {
+                req.requestMatchers(SecurityConstant.PUBLIC_URLS).permitAll();
+                req.requestMatchers(SecurityConstant.AUTHENTICATED_URLS).authenticated();
+//                req.requestMatchers(SecurityConstant.ADMIN_URLS).hasRole("ADMIN");
+//                req.requestMatchers(SecurityConstant.MEMBER_URLS).hasRole("MEMBER");
+                req.anyRequest().denyAll();
             })
             .sessionManagement(sessionManagement -> sessionManagement.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
             .authenticationProvider(authenticationProvider)
@@ -50,12 +52,8 @@ public class SecurityConfiguration {
     CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration configuration = new CorsConfiguration();
         configuration.addAllowedOrigin("*");
-        configuration.setAllowedMethods(List.of(
-                HttpMethod.GET.name(),
-                HttpMethod.POST.name(),
-                HttpMethod.PUT.name(),
-                HttpMethod.DELETE.name())
-        );
+        configuration.setAllowedMethods(List.of(HttpMethod.GET.name(), HttpMethod.POST.name(), HttpMethod.PUT.name(),
+                HttpMethod.DELETE.name()));
 
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
         source.registerCorsConfiguration("/**", configuration);

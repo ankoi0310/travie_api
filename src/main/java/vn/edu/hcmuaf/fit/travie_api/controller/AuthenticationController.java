@@ -45,8 +45,8 @@ public class AuthenticationController {
     }
 
     @PostMapping("/refresh-token")
-    public ResponseEntity<HttpResponse> refreshToken() throws BaseException {
-        RefreshTokenResponse refreshTokenResponse = authenticationService.refreshToken();
+    public ResponseEntity<HttpResponse> refreshToken(@RequestBody RefreshTokenRequest request) throws BaseException {
+        RefreshTokenResponse refreshTokenResponse = authenticationService.refreshToken(request);
         return ResponseEntity.ok(HttpResponse.success(refreshTokenResponse, "Làm mới token thành công!"));
     }
 }
