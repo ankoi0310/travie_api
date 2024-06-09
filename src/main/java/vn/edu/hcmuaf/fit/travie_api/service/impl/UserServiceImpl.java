@@ -3,12 +3,13 @@ package vn.edu.hcmuaf.fit.travie_api.service.impl;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
-import vn.edu.hcmuaf.fit.travie_api.core.exception.BaseException;
-import vn.edu.hcmuaf.fit.travie_api.core.exception.NotFoundException;
+import vn.edu.hcmuaf.fit.travie_api.core.exception.*;
 import vn.edu.hcmuaf.fit.travie_api.core.shared.utils.AppUtil;
+import vn.edu.hcmuaf.fit.travie_api.dto.auth.ChangePasswordRequest;
 import vn.edu.hcmuaf.fit.travie_api.dto.user.UserProfileDTO;
 import vn.edu.hcmuaf.fit.travie_api.dto.user.UserProfileRequest;
 import vn.edu.hcmuaf.fit.travie_api.entity.AppUser;
@@ -26,6 +27,7 @@ public class UserServiceImpl implements UserService {
 
     private final UserRepository userRepository;
     private final UserMapper userMapper;
+    private final PasswordEncoder passwordEncoder;
 
     @Override
     public UserProfileDTO getProfile() throws BaseException {
@@ -81,9 +83,21 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public void changePassword(String oldPassword, String newPassword) throws BaseException {
-        String email = AppUtil.getCurrentUsername();
+    public void changePassword(ChangePasswordRequest request) throws BaseException {
+        String username = AppUtil.getCurrentUsername();
+        AppUser user = userRepository.findByUsername(username)
+                                     .orElseThrow(() -> new NotFoundException("Không tìm thấy thông tin người " +
+                                             "dùng!"));
 
+        if (request.getCurrentPassword().equals(request.getNewPassword())) {
+            throw new BadRequestException("Mật khẩu mới không được trùng với mật khẩu cũ!");
+        }
 
+        if (!passwordEncoder.matches(request.getCurrentPassword(), user.getPassword())) {
+            throw new BadRequestException("Mật khẩu cũ không đúng!");
+        }
+
+        user.setPassword(passwordEncoder.encode(request.getNewPassword()));
+        userRepository.save(user);
     }
 }

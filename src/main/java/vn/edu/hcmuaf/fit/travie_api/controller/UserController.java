@@ -5,6 +5,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import vn.edu.hcmuaf.fit.travie_api.core.exception.BaseException;
 import vn.edu.hcmuaf.fit.travie_api.core.handler.HttpResponse;
+import vn.edu.hcmuaf.fit.travie_api.dto.auth.ChangePasswordRequest;
 import vn.edu.hcmuaf.fit.travie_api.dto.user.UserProfileDTO;
 import vn.edu.hcmuaf.fit.travie_api.dto.user.UserProfileRequest;
 import vn.edu.hcmuaf.fit.travie_api.service.UserService;
@@ -25,5 +26,11 @@ public class UserController {
     public ResponseEntity<HttpResponse> updateProfile(@RequestBody UserProfileRequest userProfileRequest) throws BaseException {
         UserProfileDTO userProfile = userService.updateProfile(userProfileRequest);
         return ResponseEntity.ok(HttpResponse.success(userProfile, "Cập nhật thông tin thành công!"));
+    }
+
+    @PutMapping("/change-password")
+    public ResponseEntity<HttpResponse> changePassword(@RequestBody ChangePasswordRequest changePasswordRequest) throws BaseException {
+        userService.changePassword(changePasswordRequest);
+        return ResponseEntity.ok(HttpResponse.success("Đổi mật khẩu thành công!"));
     }
 }
