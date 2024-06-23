@@ -36,7 +36,6 @@ public class Invoice extends BaseEntity {
 
     private String guestName;
 
-    @Column(nullable = false)
     private int price;
 
     private int discount;

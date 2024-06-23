@@ -54,6 +54,14 @@ public class RoomRepositoryImpl extends AbstractRepository<Room, Long> implement
     private BooleanBuilder buildSearchPredicate(RoomSearch roomSearch) {
         BooleanBuilder predicate = new BooleanBuilder();
 
+        if (roomSearch.getHotelId() != null) {
+            predicate.and(qRoom.hotel.id.eq(roomSearch.getHotelId()));
+        }
+
+        if (roomSearch.getApplyFlashSale() != null) {
+            predicate.and(qRoom.applyFlashSale.eq(roomSearch.getApplyFlashSale()));
+        }
+
         return predicate;
     }
 }

@@ -23,6 +23,22 @@ public class Hotel extends BaseEntity {
     @Column(columnDefinition = "text")
     private String introduction;
 
+    private int firstHours; // 1
+
+    private int checkIn;
+    private int checkOut;
+    private boolean daily;
+
+    private int startHourly;
+    private int endHourly;
+    private boolean hourly;
+
+    private int startOvernight;
+    private int endOvernight;
+    private boolean overnight;
+
+    private int cancelBeforeHours; // 1
+
     @OneToOne
     @JoinColumn(referencedColumnName = "id")
     private Address address;
@@ -38,7 +54,16 @@ public class Hotel extends BaseEntity {
     private HotelStatus status;
 
     @Column(columnDefinition = "double default 0")
-    private double rating;
+    private double averageMark;
+
+    @Column(columnDefinition = "double default 0")
+    private double averageMarkClean;
+    
+    @Column(columnDefinition = "double default 0")
+    private double averageMarkAmenity;
+
+    @Column(columnDefinition = "double default 0")
+    private double averageMarkService;
 
     @OneToMany(mappedBy = "hotel")
     private List<Review> reviews;

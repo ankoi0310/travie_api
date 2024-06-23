@@ -22,6 +22,18 @@ public class HotelController {
         return ResponseEntity.ok(HttpResponse.success(hotels, "Tìm kiếm thành công"));
     }
 
+    @GetMapping("/nearby")
+    public ResponseEntity<HttpResponse> getNearbyHotels(@RequestParam String location) {
+        List<HotelDTO> hotels = hotelService.getNearbyHotels(location);
+        return ResponseEntity.ok(HttpResponse.success(hotels, "Lấy danh sách khách sạn gần đây thành công"));
+    }
+
+    @GetMapping("/popular")
+    public ResponseEntity<HttpResponse> getPopularHotels() {
+        List<HotelDTO> hotels = hotelService.getPopularHotels();
+        return ResponseEntity.ok(HttpResponse.success(hotels, "Lấy danh sách khách sạn phổ biến thành công"));
+    }
+
     @GetMapping("/{id}")
     public ResponseEntity<HttpResponse> getHotelById(@PathVariable long id) throws BaseException {
         HotelDTO hotel = hotelService.getHotelById(id);

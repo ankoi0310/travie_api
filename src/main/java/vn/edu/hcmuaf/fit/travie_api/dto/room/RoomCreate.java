@@ -1,6 +1,7 @@
 package vn.edu.hcmuaf.fit.travie_api.dto.room;
 
-import jakarta.validation.constraints.*;
+import jakarta.validation.constraints.NotEmpty;
+import jakarta.validation.constraints.NotNull;
 import lombok.*;
 import lombok.experimental.SuperBuilder;
 import vn.edu.hcmuaf.fit.travie_api.dto.amenity.AmenityDTO;
@@ -16,12 +17,23 @@ public class RoomCreate {
     @NotNull
     private String name;
 
-    private String description;
-
-    @NotNull
-//    @Pattern(regexp = "^[1-9]\\d{3,}$")
-    @Positive
-    private int price;
+    private int numOfRooms;
+    private int firstHoursOrigin;
+    private int minNumHours;
+    private int maxNumHours;
+    private int oneDayOrigin;
+    private int overNightOrigin;
+    private int additionalHours;
+    private int additionalOrigin;
+    private boolean hasDiscount;
+    private boolean applyFlashSale;
+    private int priceFlashSale;
+    private boolean hasExtraFee;
+    private boolean available;
+    private boolean availableTonight;
+    private boolean availableTomorrow;
+    private boolean soldOut;
+    private int status;
 
     @NotNull
     private HotelDTO hotel;

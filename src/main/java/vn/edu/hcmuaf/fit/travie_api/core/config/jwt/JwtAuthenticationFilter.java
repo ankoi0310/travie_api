@@ -40,7 +40,6 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
             return;
         }
 
-        System.out.println("request.getServletPath(): " + request.getServletPath());
         if (Arrays.stream(SecurityConstant.PUBLIC_URLS).toList().contains(request.getServletPath())) {
             filterChain.doFilter(request, response);
             return;
@@ -53,7 +52,6 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
         }
 
         try {
-            System.out.println("authHeader: " + authHeader);
             String token = authHeader.substring(7);
             String username = jwtProvider.getUsernameFromJWT(token);
 

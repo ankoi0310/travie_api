@@ -32,13 +32,14 @@ public class BookingServiceImpl implements BookingService {
                                   .orElseThrow(() -> new BadRequestException("Phòng không tồn tại"));
 
         BookingType bookingType = bookingTypeRepository.findById(bookingRequest.getType().getId())
-                                                       .orElseThrow(() -> new BadRequestException("Loại đặt " + "ph" +
-                                                               "òng" + " không tồn tại"));
+                                                       .orElseThrow(() -> new BadRequestException("Loại đặt phòng " +
+                                                               "không tồn tại"));
 
-        int price = room.getPrice() * bookingRequest.getDuration();
+        // TODO: check room is available and booking type
+        int totalPrice = 0;
         Invoice newInvoice = Invoice.builder().room(room).type(bookingType).duration(bookingRequest.getDuration())
                                     .checkIn(bookingRequest.getCheckIn()).checkOut(bookingRequest.getCheckOut())
-                                    .price(room.getPrice() * bookingRequest.getDuration()).total(price)
+                                    .price(totalPrice).total(totalPrice)
                                     .bookingStatus(BookingStatus.PENDING).paymentStatus(PaymentStatus.UNPAID).build();
 
         bookingRepository.save(newInvoice);

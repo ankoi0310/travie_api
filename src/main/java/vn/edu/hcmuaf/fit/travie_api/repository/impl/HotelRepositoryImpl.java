@@ -29,6 +29,22 @@ public class HotelRepositoryImpl extends AbstractRepository<Hotel, Long> impleme
     }
 
     @Override
+    public List<Hotel> findNearbyHotels(String location) {
+        return queryFactory.selectFrom(qHotel)
+                           .where(qHotel.address.fullAddress.containsIgnoreCase(location))
+                           .limit(5)
+                           .fetch();
+    }
+
+    @Override
+    public List<Hotel> findTop5ByOrderByAverageMarkDesc() {
+        return queryFactory.selectFrom(qHotel)
+                           .orderBy(qHotel.averageMark.desc())
+                           .limit(5)
+                           .fetch();
+    }
+
+    @Override
     public Optional<Hotel> findByName(String name) {
         return Optional.ofNullable(queryFactory
                 .selectFrom(qHotel)

@@ -27,21 +27,13 @@ public class RoomServiceImpl implements RoomService {
     @Override
     public List<RoomDTO> search(RoomSearch roomSearch) {
         List<Room> rooms = roomRepository.search(roomSearch);
-        return mapper.toRoomDTOs(rooms);
-    }
-
-    @Override
-    public List<RoomDTO> getRoomsByHotelId(long hotelId) throws BaseException {
-        hotelRepository.findById(hotelId).orElseThrow(() -> new NotFoundException("Hotel not found"));
-
-        List<Room> rooms = roomRepository.findAllByHotelId(hotelId);
-        return mapper.toRoomDTOs(rooms);
+        return mapper.toRoomDTOsWithHotel(rooms);
     }
 
     @Override
     public RoomDTO getRoomById(long id) throws BaseException {
         Room room = roomRepository.findById(id).orElseThrow(() -> new NotFoundException("Room not found"));
-        return mapper.toRoomDTO(room);
+        return mapper.toRoomDTOWithHotel(room);
     }
 
     @Override
@@ -57,11 +49,12 @@ public class RoomServiceImpl implements RoomService {
         List<Long> amenityIds = roomCreate.getAmenities().stream().map(AmenityDTO::getId).toList();
         List<Amenity> amenities = amenityRepository.findAllById(amenityIds);
 
-        Room newRoom = Room.builder().name(roomCreate.getName()).description(roomCreate.getDescription())
-                           .price(roomCreate.getPrice()).hotel(hotelById).amenities(amenities).build();
+        Room newRoom = Room.builder().name(roomCreate.getName())
+                           .firstHoursOrigin(roomCreate.getFirstHoursOrigin()).hotel(hotelById).amenities(amenities)
+                           .build();
 
         Room room = roomRepository.save(newRoom);
-        return mapper.toRoomDTO(room);
+        return mapper.toRoomDTOWithHotel(room);
     }
 
     @Override

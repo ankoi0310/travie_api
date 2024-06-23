@@ -12,5 +12,9 @@ import java.util.Optional;
 public interface HotelRepository extends CustomRepository<Hotel, Long> {
     List<Hotel> search(HotelSearch hotelSearch);
 
+    List<Hotel> findNearbyHotels(String location);
+
+    List<Hotel> findTop5ByOrderByAverageMarkDesc();
+
     Optional<Hotel> findByName(String name);
 }

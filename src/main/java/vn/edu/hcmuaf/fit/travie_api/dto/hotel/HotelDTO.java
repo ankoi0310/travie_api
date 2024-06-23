@@ -20,12 +20,26 @@ import java.util.List;
 public class HotelDTO extends BaseDTO {
     private String name;
     private String introduction;
+    private int firstHours;
+    private int checkIn;
+    private int checkOut;
+    private boolean daily;
+    private int startHourly;
+    private int endHourly;
+    private boolean hourly;
+    private int startOvernight;
+    private int endOvernight;
+    private boolean overnight;
+    private int cancelBeforeHours;
     private AddressDTO address;
     private List<BookingTypeDTO> bookingTypes;
     private List<RoomDTO> rooms;
     private List<String> images;
     private List<AmenityDTO> amenities;
     private HotelStatus status;
-    private double rating;
+    private double averageMark;
+    private double averageMarkClean;
+    private double averageMarkAmenity;
+    private double averageMarkService;
     private List<ReviewDTO> reviews;
 }

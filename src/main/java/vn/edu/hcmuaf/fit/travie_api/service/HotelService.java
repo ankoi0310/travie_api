@@ -8,6 +8,10 @@ import java.util.List;
 public interface HotelService {
     List<HotelDTO> search(HotelSearch hotelSearch);
 
+    List<HotelDTO> getNearbyHotels(String location);
+
+    List<HotelDTO> getPopularHotels();
+
     HotelDTO getHotelById(long id) throws BaseException;
 
     HotelDTO createHotel(HotelCreate hotelCreate) throws BaseException;

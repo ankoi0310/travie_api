@@ -31,6 +31,18 @@ public class HotelServiceImpl implements HotelService {
     }
 
     @Override
+    public List<HotelDTO> getNearbyHotels(String location) {
+        List<Hotel> hotels = hotelRepository.findNearbyHotels(location);
+        return hotelMapper.toDTOs(hotels);
+    }
+
+    @Override
+    public List<HotelDTO> getPopularHotels() {
+        List<Hotel> hotels = hotelRepository.findTop5ByOrderByAverageMarkDesc();
+        return hotelMapper.toDTOs(hotels);
+    }
+
+    @Override
     public HotelDTO getHotelById(long id) throws BaseException {
         Hotel hotel = hotelRepository.findById(id).orElseThrow(() -> new BaseException("Hotel not found"));
         return hotelMapper.toDTO(hotel);
@@ -66,8 +78,8 @@ public class HotelServiceImpl implements HotelService {
             List<Long> amenityIds = roomCreate.getAmenities().stream().mapToLong(AmenityDTO::getId).boxed().toList();
             List<Amenity> amenities = amenityRepository.findAllById(amenityIds);
 
-            Room newRoom = Room.builder().name(roomCreate.getName()).description(roomCreate.getDescription())
-                               .price(roomCreate.getPrice()).amenities(amenities).build();
+            Room newRoom = Room.builder().name(roomCreate.getName())
+                               .firstHoursOrigin(roomCreate.getFirstHoursOrigin()).amenities(amenities).build();
 
             roomRepository.save(newRoom);
 
