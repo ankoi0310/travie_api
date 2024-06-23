@@ -4,8 +4,7 @@ import jakarta.persistence.*;
 import lombok.*;
 import lombok.experimental.SuperBuilder;
 import vn.edu.hcmuaf.fit.travie_api.core.entity.BaseEntity;
-import vn.edu.hcmuaf.fit.travie_api.core.shared.enums.BookingStatus;
-import vn.edu.hcmuaf.fit.travie_api.core.shared.enums.PaymentStatus;
+import vn.edu.hcmuaf.fit.travie_api.core.shared.enums.invoice.*;
 
 import java.time.LocalDateTime;
 
@@ -17,32 +16,28 @@ import java.time.LocalDateTime;
 @Entity
 @Table(name = "booking")
 public class Invoice extends BaseEntity {
+    private int code;
+
     @ManyToOne(fetch = FetchType.LAZY)
     private Room room;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    private BookingType type;
-
-    private Integer duration;
-
     private LocalDateTime checkIn;
-
     private LocalDateTime checkOut;
 
-//    @ManyToOne(fetch = FetchType.LAZY)
-//    private AppUser user;
+    @ManyToOne
+    private BookingType bookingType;
 
-    private String phone;
+    @ManyToOne
+    private AppUser user;
 
+    private String guestPhone;
     private String guestName;
 
-    private int price;
+    private int totalPrice;
+    private int finalPrice;
 
-    private int discount;
-
-    private int total;
-
-    private String note;
+    @Enumerated(EnumType.STRING)
+    private PaymentMethod paymentMethod;
 
     @Enumerated(EnumType.STRING)
     private BookingStatus bookingStatus;

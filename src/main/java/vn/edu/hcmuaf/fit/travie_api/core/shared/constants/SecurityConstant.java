@@ -22,5 +22,7 @@ public class SecurityConstant {
 
     public static final String[] AUTHENTICATED_URLS = {
             "/user/**",
+            "/invoice/**",
+            "/booking/**",
     };
 }

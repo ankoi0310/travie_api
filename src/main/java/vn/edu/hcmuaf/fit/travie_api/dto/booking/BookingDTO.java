@@ -2,8 +2,8 @@ package vn.edu.hcmuaf.fit.travie_api.dto.booking;
 
 import com.fasterxml.jackson.annotation.*;
 import lombok.*;
-import vn.edu.hcmuaf.fit.travie_api.core.shared.enums.BookingStatus;
-import vn.edu.hcmuaf.fit.travie_api.core.shared.enums.PaymentStatus;
+import vn.edu.hcmuaf.fit.travie_api.core.shared.enums.invoice.BookingStatus;
+import vn.edu.hcmuaf.fit.travie_api.core.shared.enums.invoice.PaymentStatus;
 import vn.edu.hcmuaf.fit.travie_api.dto.bookingtype.BookingTypeDTO;
 import vn.edu.hcmuaf.fit.travie_api.entity.Room;
 

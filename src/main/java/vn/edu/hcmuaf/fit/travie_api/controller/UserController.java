@@ -6,9 +6,12 @@ import org.springframework.web.bind.annotation.*;
 import vn.edu.hcmuaf.fit.travie_api.core.exception.BaseException;
 import vn.edu.hcmuaf.fit.travie_api.core.handler.HttpResponse;
 import vn.edu.hcmuaf.fit.travie_api.dto.auth.ChangePasswordRequest;
+import vn.edu.hcmuaf.fit.travie_api.dto.invoice.InvoiceDTO;
 import vn.edu.hcmuaf.fit.travie_api.dto.user.UserProfileDTO;
 import vn.edu.hcmuaf.fit.travie_api.dto.user.UserProfileRequest;
 import vn.edu.hcmuaf.fit.travie_api.service.UserService;
+
+import java.util.List;
 
 @RestController
 @RequestMapping("/user")
@@ -32,5 +35,11 @@ public class UserController {
     public ResponseEntity<HttpResponse> changePassword(@RequestBody ChangePasswordRequest changePasswordRequest) throws BaseException {
         userService.changePassword(changePasswordRequest);
         return ResponseEntity.ok(HttpResponse.success("Đổi mật khẩu thành công!"));
+    }
+
+    @GetMapping("/booking-history")
+    public ResponseEntity<HttpResponse> getBookingHistory() throws BaseException {
+        List<InvoiceDTO> invoices = userService.getBookingHistory();
+        return ResponseEntity.ok(HttpResponse.success(invoices, "Lấy lịch sử đặt vé thành công!"));
     }
 }

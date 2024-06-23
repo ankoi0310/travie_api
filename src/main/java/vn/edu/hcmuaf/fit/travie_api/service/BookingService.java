@@ -1,12 +1,16 @@
 package vn.edu.hcmuaf.fit.travie_api.service;
 
 import vn.edu.hcmuaf.fit.travie_api.core.exception.BaseException;
-import vn.edu.hcmuaf.fit.travie_api.core.shared.enums.BookingStatus;
-import vn.edu.hcmuaf.fit.travie_api.dto.booking.BookingDTO;
 import vn.edu.hcmuaf.fit.travie_api.dto.booking.BookingRequest;
+import vn.edu.hcmuaf.fit.travie_api.dto.invoice.InvoiceDTO;
+import vn.edu.hcmuaf.fit.travie_api.dto.payment.payos.LinkCreationResponse;
+
+import java.io.IOException;
 
 public interface BookingService {
-    BookingDTO bookRoom(BookingRequest bookingRequest) throws BaseException;
+    LinkCreationResponse createBooking(BookingRequest bookingRequest) throws BaseException, IOException;
 
-    void changeBookingStatus(long id, BookingStatus status) throws BaseException;
+    InvoiceDTO cancelBooking(int code) throws BaseException;
+
+    InvoiceDTO completePayment(int code) throws BaseException;
 }

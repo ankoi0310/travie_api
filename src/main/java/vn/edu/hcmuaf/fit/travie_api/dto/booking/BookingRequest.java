@@ -12,15 +12,15 @@ import java.time.LocalDateTime;
 @AllArgsConstructor
 public class BookingRequest {
     private RoomDTO room;
-    private BookingType type;
-    private int duration;
+    private BookingType bookingType;
+    private String guestName;
+    private String guestPhone;
+    private int totalPrice;
+    private int finalPrice;
 
-    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "HH:mm dd/MM/yyyy", timezone = "Asia/Ho_Chi_Minh")
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "dd-MM-yyyy HH:mm:ss", timezone = "Asia/Ho_Chi_Minh")
     private LocalDateTime checkIn;
 
-    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "HH:mm dd/MM/yyyy", timezone = "Asia/Ho_Chi_Minh")
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "dd-MM-yyyy HH:mm:ss", timezone = "Asia/Ho_Chi_Minh")
     private LocalDateTime checkOut;
-
-    private String phone;
-    private String guestName;
 }

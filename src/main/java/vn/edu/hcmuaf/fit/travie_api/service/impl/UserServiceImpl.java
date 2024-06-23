@@ -10,12 +10,16 @@ import org.springframework.web.multipart.MultipartFile;
 import vn.edu.hcmuaf.fit.travie_api.core.exception.*;
 import vn.edu.hcmuaf.fit.travie_api.core.shared.utils.AppUtil;
 import vn.edu.hcmuaf.fit.travie_api.dto.auth.ChangePasswordRequest;
+import vn.edu.hcmuaf.fit.travie_api.dto.invoice.InvoiceDTO;
 import vn.edu.hcmuaf.fit.travie_api.dto.user.UserProfileDTO;
 import vn.edu.hcmuaf.fit.travie_api.dto.user.UserProfileRequest;
 import vn.edu.hcmuaf.fit.travie_api.entity.AppUser;
 import vn.edu.hcmuaf.fit.travie_api.mapper.UserMapper;
 import vn.edu.hcmuaf.fit.travie_api.repository.UserRepository;
+import vn.edu.hcmuaf.fit.travie_api.service.InvoiceService;
 import vn.edu.hcmuaf.fit.travie_api.service.UserService;
+
+import java.util.List;
 
 @Log4j2
 @Service
@@ -29,11 +33,12 @@ public class UserServiceImpl implements UserService {
     private final UserMapper userMapper;
     private final PasswordEncoder passwordEncoder;
 
+    private final InvoiceService invoiceService;
+
     @Override
     public UserProfileDTO getProfile() throws BaseException {
         try {
             String username = AppUtil.getCurrentUsername();
-            System.out.println("username: " + username);
 
             AppUser user = userRepository.findByUsername(username)
                                          .orElseThrow(() -> new NotFoundException("Người dùng không tồn tại!"));
@@ -99,5 +104,14 @@ public class UserServiceImpl implements UserService {
 
         user.setPassword(passwordEncoder.encode(request.getNewPassword()));
         userRepository.save(user);
+    }
+
+    @Override
+    public List<InvoiceDTO> getBookingHistory() throws BaseException {
+        String username = AppUtil.getCurrentUsername();
+        AppUser user = userRepository.findByUsername(username)
+                                     .orElseThrow(() -> new NotFoundException("Người dùng không tồn tại!"));
+
+        return invoiceService.getInvoicesByUser(user);
     }
 }
