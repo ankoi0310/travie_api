@@ -53,6 +53,16 @@ public class AuthenticationServiceImpl implements AuthenticationService {
             if (defaultAppRole == null) {
                 throw new ServiceUnavailableException("Không tìm thấy quyền mặc định");
             }
+            AppRole defaultAppRole1;
+            synchronized (this) {
+                defaultAppRole1 = appRoleRepository.findByRole(AppConstant.DEFAULT_ROLE)
+                        .orElseGet(() -> {
+                            AppRole newRole = AppRole.builder()
+                                    .role(AppConstant.DEFAULT_ROLE)
+                                    .build();
+                            return appRoleRepository.save(newRole);
+                        });
+            }
 
             UserInfo userInfo = UserInfo.builder()
                                         .fullName(registerRequest.getFullName())
@@ -62,7 +72,7 @@ public class AuthenticationServiceImpl implements AuthenticationService {
                                      .phone(registerRequest.getPhone())
                                      .password(passwordEncoder.encode(registerRequest.getPassword()))
                                      .userInfo(userInfo)
-                                     .appRole(defaultAppRole)
+                                     .appRole(defaultAppRole1)
                                      .build();
 
             userRepository.save(newUser);
@@ -189,13 +199,51 @@ public class AuthenticationServiceImpl implements AuthenticationService {
         }
     }
 
+    private String resetPasswordEmail;
     @Override
     public void forgotPassword(String email) throws BaseException {
-//        mailService.sendResetPasswordEmail(passwordResetOTP);
+        try {
+            AppUser appUser = userRepository.findByEmail(email)
+                    .orElseThrow(() -> new NotFoundException("Email không tồn tại"));
+
+            OTP otp = otpService.generateOTP(appUser.getEmail(), OTPType.RESET_PASSWORD);
+            mailService.sendOTP(appUser.getEmail(), otp.getCode(), otp.getType());
+
+            resetPasswordEmail = email;
+        } catch (NotFoundException e) {
+            log.error(e.toString());
+            throw e;
+        } catch (Exception e) {
+            log.error(e.toString());
+            throw new ServiceUnavailableException("Không thể gửi OTP, vui lòng thử lại sau");
+        }
     }
 
     @Override
-    public void resetPassword(ResetPasswordRequest request) {
+    public void resetPassword(ResetPasswordRequest request) throws BaseException {
+        try {
+            OTP otp = otpService.getOTPByCode(request.getOtpCode());
+
+            if (otp == null || !otp.getEmail().equals(resetPasswordEmail) || !otp.getType().equals(OTPType.RESET_PASSWORD)) {
+                throw new BadRequestException("Mã OTP không hợp lệ");
+            }
+            AppUser appUser = userRepository.findByEmail(resetPasswordEmail)
+                    .orElseThrow(() -> new NotFoundException("Người dùng không tồn tại"));
+
+            String newPassword = passwordEncoder.encode(request.getNewPassword());
+            appUser.setPassword(newPassword);
+
+            userRepository.save(appUser);
+
+            resetPasswordEmail = null;
+
+        } catch (NotFoundException | BadRequestException e) {
+            log.error(e.toString());
+            throw e;
+        } catch (Exception e) {
+            log.error(e.toString());
+            throw new ServiceUnavailableException("Không thể đặt lại mật khẩu, vui lòng thử lại sau");
+        }
     }
 
     @Override
