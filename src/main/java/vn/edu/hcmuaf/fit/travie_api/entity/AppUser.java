@@ -40,8 +40,8 @@ public class AppUser extends BaseEntity implements UserDetails {
     @JoinColumn(referencedColumnName = "id")
     private UserInfo userInfo;
 
-    @OneToOne(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
-    @JoinColumn(referencedColumnName = "id", name = "app_role_id")
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "app_role_id")
     private AppRole appRole;
 
     @Override
