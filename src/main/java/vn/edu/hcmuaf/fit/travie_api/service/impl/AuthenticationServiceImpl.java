@@ -199,6 +199,7 @@ public class AuthenticationServiceImpl implements AuthenticationService {
         }
     }
 
+
     private String resetPasswordEmail;
     @Override
     public void forgotPassword(String email) throws BaseException {
