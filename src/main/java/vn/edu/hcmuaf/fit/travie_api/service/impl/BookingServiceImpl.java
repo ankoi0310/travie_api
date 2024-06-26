@@ -149,7 +149,7 @@ public class BookingServiceImpl implements BookingService {
         switch (invoice.getBookingStatus()) {
             case PENDING -> {
                 invoice.setBookingStatus(BookingStatus.CANCELLED);
-                invoice.setPaymentStatus(PaymentStatus.CANCELLED);
+                invoice.setPaymentStatus(PaymentStatus.FAILED);
                 invoice = invoiceRepository.save(invoice);
             }
             case SUCCESS -> throw new BadRequestException("Hóa đơn đã được xác nhận");

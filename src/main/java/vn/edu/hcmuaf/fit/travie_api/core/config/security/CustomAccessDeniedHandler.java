@@ -1,5 +1,7 @@
 package vn.edu.hcmuaf.fit.travie_api.core.config.security;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
@@ -17,9 +19,14 @@ public class CustomAccessDeniedHandler implements AccessDeniedHandler {
                        AccessDeniedException accessDeniedException) throws IOException, ServletException {
         HttpResponse httpResponse = HttpResponse.fail(403, "Không có quyền truy cập");
 
+        response.setCharacterEncoding("UTF-8");
         response.setContentType("application/json");
         response.setStatus(HttpServletResponse.SC_FORBIDDEN);
 
-        response.getWriter().write(httpResponse.toString());
+        ObjectMapper mapper = new ObjectMapper();
+        mapper.registerModule(new JavaTimeModule());
+        String json = mapper.writeValueAsString(httpResponse);
+
+        response.getWriter().write(json);
     }
 }
