@@ -93,20 +93,27 @@ public class AuthenticationServiceImpl implements AuthenticationService {
             throw new BadRequestException("Mã OTP không hợp lệ");
         }
 
-        switch (otp.getType()) {
-            case VERIFY_EMAIL:
-                AppUser appUser = userRepository.findByEmail(otp.getEmail())
-                                                .orElseThrow(() -> new NotFoundException("Tài khoản không tồn tại"));
+        return switch (otp.getType()) {
+            case VERIFY_EMAIL -> verifyEmail(otp);
+            case RESET_PASSWORD -> verifyResetPassword(otp);
+            case VERIFY_PHONE -> throw new BadRequestException("Chức năng chưa được hỗ trợ");
+        };
+    }
 
-                appUser.setEmailVerified(true);
-                appUser.setEnabled(true);
-                userRepository.save(appUser);
-                return "Xác thực email thành công";
-            case VERIFY_PHONE, RESET_PASSWORD:
-                throw new BadRequestException("Chức năng chưa được hỗ trợ");
-            default:
-                throw new BadRequestException("Loại OTP không hợp lệ");
-        }
+    private String verifyResetPassword(OTP otp) throws BaseException {
+        AppUser appUser = userRepository.findByEmail(otp.getEmail())
+                                        .orElseThrow(() -> new NotFoundException("Người dùng không tồn tại"));
+        return "Xác thực đặt lại mật khẩu thành công";
+    }
+
+    private String verifyEmail(OTP otp) throws BaseException {
+        AppUser appUser = userRepository.findByEmail(otp.getEmail())
+                                        .orElseThrow(() -> new NotFoundException("Tài khoản không tồn tại"));
+
+        appUser.setEmailVerified(true);
+        appUser.setEnabled(true);
+        userRepository.save(appUser);
+        return "Xác thực email thành công";
     }
 
     @Override
@@ -190,8 +197,6 @@ public class AuthenticationServiceImpl implements AuthenticationService {
     }
 
 
-    private String resetPasswordEmail;
-
     @Override
     public void forgotPassword(String email) throws BaseException {
         try {
@@ -201,7 +206,6 @@ public class AuthenticationServiceImpl implements AuthenticationService {
             OTP otp = otpService.generateOTP(appUser.getEmail(), OTPType.RESET_PASSWORD);
             mailService.sendOTP(appUser.getEmail(), otp.getCode(), otp.getType());
 
-            resetPasswordEmail = email;
         } catch (NotFoundException e) {
             log.error(e.toString());
             throw e;
@@ -214,28 +218,17 @@ public class AuthenticationServiceImpl implements AuthenticationService {
     @Override
     public void resetPassword(ResetPasswordRequest request) throws BaseException {
         try {
-            OTP otp = otpService.getOTPByCode(request.getOtpCode());
+            AppUser appUser = userRepository.findByEmail(request.getEmail())
+                                            .orElseThrow(() -> new NotFoundException("Tài khoản không tồn tại"));
 
-            if (otp == null || !otp.getEmail().equals(resetPasswordEmail) || !otp.getType()
-                                                                                 .equals(OTPType.RESET_PASSWORD)) {
-                throw new BadRequestException("Mã OTP không hợp lệ");
-            }
-            AppUser appUser = userRepository.findByEmail(resetPasswordEmail)
-                                            .orElseThrow(() -> new NotFoundException("Người dùng không tồn tại"));
-
-            String newPassword = passwordEncoder.encode(request.getNewPassword());
-            appUser.setPassword(newPassword);
-
+            appUser.setPassword(passwordEncoder.encode(request.getNewPassword()));
             userRepository.save(appUser);
-
-            resetPasswordEmail = null;
-
-        } catch (NotFoundException | BadRequestException e) {
+        } catch (NotFoundException e) {
             log.error(e.toString());
             throw e;
         } catch (Exception e) {
             log.error(e.toString());
-            throw new ServiceUnavailableException("Không thể đặt lại mật khẩu, vui lòng thử lại sau");
+            throw new ServiceUnavailableException("Không thể đặt lại mật khẩu");
         }
     }
 

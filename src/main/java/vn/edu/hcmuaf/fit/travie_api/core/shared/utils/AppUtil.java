@@ -25,4 +25,8 @@ public class AppUtil {
         String DOWNLOAD_URL = "https://firebasestorage.googleapis.com/v0/b/%s/o/%s?alt=media";
         return String.format(DOWNLOAD_URL, firebaseStorageBucket, URLEncoder.encode(fileName, StandardCharsets.UTF_8));
     }
+
+    public static int generateInvoiceCode() {
+        return (int) (System.currentTimeMillis() / 1000);
+    }
 }

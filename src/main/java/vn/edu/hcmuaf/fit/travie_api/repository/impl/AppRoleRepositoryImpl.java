@@ -3,7 +3,7 @@ package vn.edu.hcmuaf.fit.travie_api.repository.impl;
 import jakarta.persistence.EntityManager;
 import org.springframework.stereotype.Repository;
 import vn.edu.hcmuaf.fit.travie_api.core.repository.AbstractRepository;
-import vn.edu.hcmuaf.fit.travie_api.core.shared.enums.UserRole;
+import vn.edu.hcmuaf.fit.travie_api.core.shared.enums.user.UserRole;
 import vn.edu.hcmuaf.fit.travie_api.entity.AppRole;
 import vn.edu.hcmuaf.fit.travie_api.entity.QAppRole;
 import vn.edu.hcmuaf.fit.travie_api.repository.AppRoleRepository;

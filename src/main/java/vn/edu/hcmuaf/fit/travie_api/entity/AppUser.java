@@ -40,7 +40,7 @@ public class AppUser extends BaseEntity implements UserDetails {
     @JoinColumn(referencedColumnName = "id")
     private UserInfo userInfo;
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne
     @JoinColumn(name = "app_role_id")
     private AppRole appRole;
 

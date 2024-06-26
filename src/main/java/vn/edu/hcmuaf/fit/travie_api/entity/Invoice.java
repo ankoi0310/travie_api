@@ -14,7 +14,7 @@ import java.time.LocalDateTime;
 @NoArgsConstructor
 @AllArgsConstructor
 @Entity
-@Table(name = "booking")
+@Table(name = "invoice")
 public class Invoice extends BaseEntity {
     private int code;
 
@@ -30,9 +30,8 @@ public class Invoice extends BaseEntity {
     @ManyToOne
     private AppUser user;
 
-    private String guestPhone;
     private String guestName;
-
+    private String guestPhone;
     private int totalPrice;
     private int finalPrice;
 

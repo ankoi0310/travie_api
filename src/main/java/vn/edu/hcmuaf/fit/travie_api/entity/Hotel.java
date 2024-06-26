@@ -4,7 +4,7 @@ import jakarta.persistence.*;
 import lombok.*;
 import lombok.experimental.SuperBuilder;
 import vn.edu.hcmuaf.fit.travie_api.core.entity.BaseEntity;
-import vn.edu.hcmuaf.fit.travie_api.core.shared.enums.HotelStatus;
+import vn.edu.hcmuaf.fit.travie_api.core.shared.enums.hotel.HotelStatus;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -58,7 +58,7 @@ public class Hotel extends BaseEntity {
 
     @Column(columnDefinition = "double default 0")
     private double averageMarkClean;
-    
+
     @Column(columnDefinition = "double default 0")
     private double averageMarkAmenity;
 

@@ -19,6 +19,7 @@ import vn.edu.hcmuaf.fit.travie_api.dto.invoice.InvoiceDTO;
 import vn.edu.hcmuaf.fit.travie_api.dto.payment.payos.LinkCreationResponse;
 import vn.edu.hcmuaf.fit.travie_api.dto.payment.payos.PayOSResponse;
 import vn.edu.hcmuaf.fit.travie_api.entity.*;
+import vn.edu.hcmuaf.fit.travie_api.mapper.InvoiceMapper;
 import vn.edu.hcmuaf.fit.travie_api.repository.*;
 import vn.edu.hcmuaf.fit.travie_api.service.BookingService;
 
@@ -54,6 +55,7 @@ public class BookingServiceImpl implements BookingService {
     private final BookingTypeRepository bookingTypeRepository;
     private final RoomRepository roomRepository;
     private final UserRepository userRepository;
+    private final InvoiceMapper invoiceMapper;
 
     @Override
     public LinkCreationResponse createBooking(BookingRequest bookingRequest) throws BaseException, IOException {
@@ -66,13 +68,15 @@ public class BookingServiceImpl implements BookingService {
                                       .orElseThrow(() -> new BadRequestException("Phòng không tồn tại"));
 
             BookingType bookingType = bookingTypeRepository.findById(bookingRequest.getBookingType().getId())
-                                                           .orElseThrow(() -> new BadRequestException("Loại đặt phòng" +
-                                                                   " không tồn tại"));
+                                                           .orElseThrow(() -> new BadRequestException("Loại đặt " +
+                                                                   "phòng" + " không tồn tại"));
 
-            Invoice newInvoice = Invoice.builder().room(room).bookingType(bookingType)
-                                        .checkIn(bookingRequest.getCheckIn()).checkOut(bookingRequest.getCheckOut())
+            Invoice newInvoice = Invoice.builder().user(appUser).code(AppUtil.generateInvoiceCode()).room(room)
+                                        .bookingType(bookingType).checkIn(bookingRequest.getCheckIn())
+                                        .checkOut(bookingRequest.getCheckOut())
                                         .totalPrice(bookingRequest.getTotalPrice())
                                         .finalPrice(bookingRequest.getFinalPrice())
+                                        .paymentMethod(bookingRequest.getPaymentMethod())
                                         .bookingStatus(BookingStatus.PENDING).paymentStatus(PaymentStatus.UNPAID)
                                         .build();
 
@@ -108,8 +112,7 @@ public class BookingServiceImpl implements BookingService {
 
             String response = Request.post(PAYOS_API_URL + "/v2/payment-requests")
                                      .addHeader("Content-Type", "application/json")
-                                     .addHeader("x-client-id", PAYOS_CLIENT_ID)
-                                     .addHeader("x-api-key", PAYOS_API_KEY)
+                                     .addHeader("x-client-id", PAYOS_CLIENT_ID).addHeader("x-api-key", PAYOS_API_KEY)
                                      .bodyString(json.toString(),
                                              ContentType.APPLICATION_JSON.withCharset(StandardCharsets.UTF_8))
                                      .execute().returnContent().asString(StandardCharsets.UTF_8);
@@ -139,12 +142,44 @@ public class BookingServiceImpl implements BookingService {
     }
 
     @Override
-    public InvoiceDTO cancelBooking(int code) throws BaseException {
-        return null;
+    public InvoiceDTO cancelCheckout(int code) throws BaseException {
+        Invoice invoice = invoiceRepository.findByCode(code)
+                                           .orElseThrow(() -> new NotFoundException("Không tìm thấy hóa đơn"));
+
+        switch (invoice.getBookingStatus()) {
+            case PENDING -> {
+                invoice.setBookingStatus(BookingStatus.CANCELLED);
+                invoice.setPaymentStatus(PaymentStatus.CANCELLED);
+                invoice = invoiceRepository.save(invoice);
+            }
+            case SUCCESS -> throw new BadRequestException("Hóa đơn đã được xác nhận");
+            case REJECTED -> throw new BadRequestException("Hóa đơn đã bị từ chối");
+            case CANCELLED -> throw new BadRequestException("Hóa đơn đã bị hủy");
+            case COMPLETED -> throw new BadRequestException("Hóa đơn đã hoàn thành");
+            default -> throw new BadRequestException("Trạng thái hóa đơn không hợp lệ");
+        }
+
+        return invoiceMapper.toInvoiceDTO(invoice);
     }
 
     @Override
-    public InvoiceDTO completePayment(int code) throws BaseException {
-        return null;
+    public InvoiceDTO completeCheckout(int code) throws BaseException {
+        Invoice invoice = invoiceRepository.findByCode(code)
+                                           .orElseThrow(() -> new NotFoundException("Không tìm thấy hóa đơn"));
+
+        switch (invoice.getBookingStatus()) {
+            case PENDING -> {
+                invoice.setBookingStatus(BookingStatus.SUCCESS);
+                invoice.setPaymentStatus(PaymentStatus.PAID);
+                invoice = invoiceRepository.save(invoice);
+            }
+            case SUCCESS -> throw new BadRequestException("Hóa đơn đã được xác nhận");
+            case REJECTED -> throw new BadRequestException("Hóa đơn đã bị từ chối");
+            case CANCELLED -> throw new BadRequestException("Hóa đơn đã bị hủy");
+            case COMPLETED -> throw new BadRequestException("Hóa đơn đã hoàn thành");
+            default -> throw new BadRequestException("Trạng thái hóa đơn không hợp lệ");
+        }
+
+        return invoiceMapper.toInvoiceDTO(invoice);
     }
 }

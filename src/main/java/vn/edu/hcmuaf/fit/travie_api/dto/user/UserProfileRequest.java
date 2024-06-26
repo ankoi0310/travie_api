@@ -4,7 +4,7 @@ import com.fasterxml.jackson.annotation.JsonFormat;
 import jakarta.validation.constraints.NotBlank;
 import lombok.Data;
 import vn.edu.hcmuaf.fit.travie_api.core.infrastructure.annotation.Phone;
-import vn.edu.hcmuaf.fit.travie_api.core.shared.enums.Gender;
+import vn.edu.hcmuaf.fit.travie_api.core.shared.enums.user.Gender;
 
 import java.time.LocalDate;
 

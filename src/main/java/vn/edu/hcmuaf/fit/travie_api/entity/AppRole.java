@@ -4,7 +4,7 @@ import jakarta.persistence.*;
 import lombok.*;
 import lombok.experimental.SuperBuilder;
 import vn.edu.hcmuaf.fit.travie_api.core.entity.BaseEntity;
-import vn.edu.hcmuaf.fit.travie_api.core.shared.enums.UserRole;
+import vn.edu.hcmuaf.fit.travie_api.core.shared.enums.user.UserRole;
 
 import java.util.List;
 
@@ -22,7 +22,7 @@ public class AppRole extends BaseEntity {
     @Enumerated(EnumType.STRING)
     private UserRole role;
 
-    @OneToMany(mappedBy = "appRole", fetch = FetchType.LAZY)
+    @OneToMany(mappedBy = "appRole")
     private List<AppUser> appUsers;
 
     public AppRole(UserRole role) {

@@ -1,4 +1,4 @@
-package vn.edu.hcmuaf.fit.travie_api.core.shared.enums;
+package vn.edu.hcmuaf.fit.travie_api.core.shared.enums.room;
 
 import lombok.Getter;
 

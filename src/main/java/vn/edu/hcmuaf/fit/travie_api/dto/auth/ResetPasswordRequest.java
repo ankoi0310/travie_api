@@ -1,13 +1,14 @@
 package vn.edu.hcmuaf.fit.travie_api.dto.auth;
 
+import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 import lombok.Data;
 
 @Data
 public class ResetPasswordRequest {
-    @NotBlank
-    String otpCode;
+    @Email
+    private String email;
 
     @NotBlank
-    String newPassword;
+    private String newPassword;
 }

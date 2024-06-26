@@ -4,7 +4,7 @@ import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.*;
 import lombok.experimental.SuperBuilder;
 import vn.edu.hcmuaf.fit.travie_api.core.dto.BaseDTO;
-import vn.edu.hcmuaf.fit.travie_api.core.shared.enums.TimeUnit;
+import vn.edu.hcmuaf.fit.travie_api.core.shared.enums.bookingtype.TimeUnit;
 
 import java.time.LocalTime;
 

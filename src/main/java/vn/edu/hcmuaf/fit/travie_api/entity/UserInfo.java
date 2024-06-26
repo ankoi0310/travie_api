@@ -4,7 +4,7 @@ import jakarta.persistence.*;
 import lombok.*;
 import lombok.experimental.SuperBuilder;
 import vn.edu.hcmuaf.fit.travie_api.core.entity.BaseEntity;
-import vn.edu.hcmuaf.fit.travie_api.core.shared.enums.Gender;
+import vn.edu.hcmuaf.fit.travie_api.core.shared.enums.user.Gender;
 
 import java.time.LocalDate;
 

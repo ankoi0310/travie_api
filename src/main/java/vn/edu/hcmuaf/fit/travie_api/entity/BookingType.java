@@ -4,7 +4,7 @@ import jakarta.persistence.*;
 import lombok.*;
 import lombok.experimental.SuperBuilder;
 import vn.edu.hcmuaf.fit.travie_api.core.entity.BaseEntity;
-import vn.edu.hcmuaf.fit.travie_api.core.shared.enums.TimeUnit;
+import vn.edu.hcmuaf.fit.travie_api.core.shared.enums.bookingtype.TimeUnit;
 
 import java.time.LocalTime;
 

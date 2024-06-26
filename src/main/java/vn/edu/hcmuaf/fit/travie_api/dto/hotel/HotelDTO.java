@@ -1,9 +1,10 @@
 package vn.edu.hcmuaf.fit.travie_api.dto.hotel;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import lombok.*;
 import lombok.experimental.SuperBuilder;
 import vn.edu.hcmuaf.fit.travie_api.core.dto.BaseDTO;
-import vn.edu.hcmuaf.fit.travie_api.core.shared.enums.HotelStatus;
+import vn.edu.hcmuaf.fit.travie_api.core.shared.enums.hotel.HotelStatus;
 import vn.edu.hcmuaf.fit.travie_api.dto.address.AddressDTO;
 import vn.edu.hcmuaf.fit.travie_api.dto.amenity.AmenityDTO;
 import vn.edu.hcmuaf.fit.travie_api.dto.bookingtype.BookingTypeDTO;
@@ -33,6 +34,8 @@ public class HotelDTO extends BaseDTO {
     private int cancelBeforeHours;
     private AddressDTO address;
     private List<BookingTypeDTO> bookingTypes;
+
+    @JsonIgnoreProperties({"hotel"})
     private List<RoomDTO> rooms;
     private List<String> images;
     private List<AmenityDTO> amenities;

@@ -18,15 +18,15 @@ import java.io.IOException;
 public class BookingController {
     private final BookingService bookingService;
 
-    @GetMapping("/checkout/cancel")
-    public ResponseEntity<HttpResponse> cancel(@RequestParam int code) throws BaseException {
-        InvoiceDTO invoice = bookingService.cancelBooking(code);
+    @GetMapping("/cancel-checkout")
+    public ResponseEntity<HttpResponse> cancelCheckout(@RequestParam int code) throws BaseException {
+        InvoiceDTO invoice = bookingService.cancelCheckout(code);
         return ResponseEntity.ok(HttpResponse.success(invoice, "Hủy phòng thành công!"));
     }
 
-    @GetMapping("/checkout/complete")
-    public ResponseEntity<HttpResponse> success(@RequestParam int code) throws BaseException {
-        InvoiceDTO invoice = bookingService.completePayment(code);
+    @GetMapping("/complete-checkout")
+    public ResponseEntity<HttpResponse> completeCheckout(@RequestParam int code) throws BaseException {
+        InvoiceDTO invoice = bookingService.completeCheckout(code);
         return ResponseEntity.ok(HttpResponse.success(invoice, "Thanh toán thành công!"));
     }
 

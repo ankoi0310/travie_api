@@ -2,7 +2,7 @@ package vn.edu.hcmuaf.fit.travie_api.repository;
 
 import org.springframework.data.repository.NoRepositoryBean;
 import vn.edu.hcmuaf.fit.travie_api.core.repository.CustomRepository;
-import vn.edu.hcmuaf.fit.travie_api.core.shared.enums.UserRole;
+import vn.edu.hcmuaf.fit.travie_api.core.shared.enums.user.UserRole;
 import vn.edu.hcmuaf.fit.travie_api.entity.AppRole;
 
 import java.util.Optional;
