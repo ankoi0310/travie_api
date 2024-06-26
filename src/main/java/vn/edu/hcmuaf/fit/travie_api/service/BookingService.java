@@ -10,7 +10,7 @@ import java.io.IOException;
 public interface BookingService {
     LinkCreationResponse createBooking(BookingRequest bookingRequest) throws BaseException, IOException;
 
-    InvoiceDTO cancelBooking(int code) throws BaseException;
+    InvoiceDTO cancelCheckout(int code) throws BaseException;
 
-    InvoiceDTO completePayment(int code) throws BaseException;
+    InvoiceDTO completeCheckout(int code) throws BaseException;
 }
