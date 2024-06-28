@@ -14,5 +14,7 @@ public class AddressDTO extends BaseDTO {
     private int wardId;
     private int districtId;
     private int provinceId;
+    private double latitude;
+    private double longitude;
     private String fullAddress;
 }

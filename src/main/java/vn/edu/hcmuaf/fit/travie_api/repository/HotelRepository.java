@@ -1,20 +1,26 @@
 package vn.edu.hcmuaf.fit.travie_api.repository;
 
+import com.querydsl.core.BooleanBuilder;
+import lombok.NonNull;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.repository.NoRepositoryBean;
 import vn.edu.hcmuaf.fit.travie_api.core.repository.CustomRepository;
 import vn.edu.hcmuaf.fit.travie_api.dto.hotel.HotelSearch;
 import vn.edu.hcmuaf.fit.travie_api.entity.Hotel;
 
-import java.util.List;
 import java.util.Optional;
 
 @NoRepositoryBean
 public interface HotelRepository extends CustomRepository<Hotel, Long> {
-    List<Hotel> search(HotelSearch hotelSearch);
+    @NonNull
+    Page<Hotel> findAll(BooleanBuilder predicate, @NonNull Pageable pageable);
 
-    List<Hotel> findNearbyHotels(String location);
+    Page<Hotel> search(HotelSearch hotelSearch, Pageable pageable);
 
-    List<Hotel> findTop5ByOrderByAverageMarkDesc();
+    Page<Hotel> findNearbyHotels(String location, Pageable pageable);
+
+    Page<Hotel> findByOrderByAverageMarkDesc(Pageable pageable);
 
     Optional<Hotel> findByName(String name);
 }

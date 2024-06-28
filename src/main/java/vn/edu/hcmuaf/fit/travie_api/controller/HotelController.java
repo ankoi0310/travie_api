@@ -1,6 +1,7 @@
 package vn.edu.hcmuaf.fit.travie_api.controller;
 
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import vn.edu.hcmuaf.fit.travie_api.core.exception.BaseException;
@@ -8,29 +9,38 @@ import vn.edu.hcmuaf.fit.travie_api.core.handler.HttpResponse;
 import vn.edu.hcmuaf.fit.travie_api.dto.hotel.*;
 import vn.edu.hcmuaf.fit.travie_api.service.HotelService;
 
-import java.util.List;
-
 @RestController
 @RequestMapping("/hotel")
 @RequiredArgsConstructor
 public class HotelController {
     private final HotelService hotelService;
 
+    @GetMapping
+    public ResponseEntity<HttpResponse> getAllHotels(@RequestParam(defaultValue = "1") int page,
+                                                     @RequestParam(defaultValue = "5") int size
+    ) {
+        Page<HotelDTO> hotels = hotelService.getAllHotels(page, size);
+        return ResponseEntity.ok(HttpResponse.success(hotels, "Lấy danh sách khách sạn thành công"));
+    }
+
     @GetMapping("/search")
     public ResponseEntity<HttpResponse> search(HotelSearch hotelSearch) {
-        List<HotelDTO> hotels = hotelService.search(hotelSearch);
+        Page<HotelDTO> hotels = hotelService.search(hotelSearch);
         return ResponseEntity.ok(HttpResponse.success(hotels, "Tìm kiếm thành công"));
     }
 
     @GetMapping("/nearby")
-    public ResponseEntity<HttpResponse> getNearbyHotels(@RequestParam String location) {
-        List<HotelDTO> hotels = hotelService.getNearbyHotels(location);
+    public ResponseEntity<HttpResponse> getNearbyHotels(@RequestParam String location,
+                                                        @RequestParam(defaultValue = "1") int page,
+                                                        @RequestParam(defaultValue = "5") int size) {
+        Page<HotelDTO> hotels = hotelService.getNearbyHotels(location, page, size);
         return ResponseEntity.ok(HttpResponse.success(hotels, "Lấy danh sách khách sạn gần đây thành công"));
     }
 
     @GetMapping("/popular")
-    public ResponseEntity<HttpResponse> getPopularHotels() {
-        List<HotelDTO> hotels = hotelService.getPopularHotels();
+    public ResponseEntity<HttpResponse> getPopularHotels(@RequestParam(defaultValue = "1") int page,
+                                                         @RequestParam(defaultValue = "5") int size) {
+        Page<HotelDTO> hotels = hotelService.getPopularHotels(page, size);
         return ResponseEntity.ok(HttpResponse.success(hotels, "Lấy danh sách khách sạn phổ biến thành công"));
     }
 

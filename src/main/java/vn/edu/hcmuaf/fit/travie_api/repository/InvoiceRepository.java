@@ -12,5 +12,7 @@ import java.util.Optional;
 public interface InvoiceRepository extends CustomRepository<Invoice, Long> {
     List<Invoice> findByUser(AppUser user);
 
+    List<Invoice> findAllPendingInvoices();
+
     Optional<Invoice> findByCode(int code);
 }

@@ -3,6 +3,7 @@ package vn.edu.hcmuaf.fit.travie_api.repository.impl;
 import jakarta.persistence.EntityManager;
 import org.springframework.stereotype.Repository;
 import vn.edu.hcmuaf.fit.travie_api.core.repository.AbstractRepository;
+import vn.edu.hcmuaf.fit.travie_api.core.shared.enums.invoice.BookingStatus;
 import vn.edu.hcmuaf.fit.travie_api.entity.*;
 import vn.edu.hcmuaf.fit.travie_api.repository.InvoiceRepository;
 
@@ -21,6 +22,13 @@ public class InvoiceRepositoryImpl extends AbstractRepository<Invoice, Long> imp
     public List<Invoice> findByUser(AppUser user) {
         return queryFactory.selectFrom(qInvoice)
                            .where(qInvoice.user.eq(user))
+                           .fetch();
+    }
+
+    @Override
+    public List<Invoice> findAllPendingInvoices() {
+        return queryFactory.selectFrom(qInvoice)
+                           .where(qInvoice.bookingStatus.eq(BookingStatus.PENDING))
                            .fetch();
     }
 

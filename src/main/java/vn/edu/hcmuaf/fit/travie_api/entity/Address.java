@@ -18,5 +18,7 @@ public class Address extends BaseEntity {
     private long wardId;
     private long districtId;
     private long provinceId;
+    private double latitude;
+    private double longitude;
     private String fullAddress;
 }

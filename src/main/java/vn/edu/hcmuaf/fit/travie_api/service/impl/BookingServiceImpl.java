@@ -68,12 +68,14 @@ public class BookingServiceImpl implements BookingService {
                                       .orElseThrow(() -> new BadRequestException("Phòng không tồn tại"));
 
             BookingType bookingType = bookingTypeRepository.findById(bookingRequest.getBookingType().getId())
-                                                           .orElseThrow(() -> new BadRequestException("Loại đặt " +
-                                                                   "phòng" + " không tồn tại"));
+                                                           .orElseThrow(() -> new BadRequestException("Loại đặt phòng" +
+                                                                   " không tồn tại"));
 
             Invoice newInvoice = Invoice.builder().user(appUser).code(AppUtil.generateInvoiceCode()).room(room)
                                         .bookingType(bookingType).checkIn(bookingRequest.getCheckIn())
                                         .checkOut(bookingRequest.getCheckOut())
+                                        .guestName(bookingRequest.getGuestName())
+                                        .guestPhone(bookingRequest.getGuestPhone())
                                         .totalPrice(bookingRequest.getTotalPrice())
                                         .finalPrice(bookingRequest.getFinalPrice())
                                         .paymentMethod(bookingRequest.getPaymentMethod())

@@ -1,6 +1,7 @@
 package vn.edu.hcmuaf.fit.travie_api.service.impl;
 
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.*;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import vn.edu.hcmuaf.fit.travie_api.core.exception.BadRequestException;
@@ -25,21 +26,31 @@ public class HotelServiceImpl implements HotelService {
     private final HotelMapper hotelMapper;
 
     @Override
-    public List<HotelDTO> search(HotelSearch hotelSearch) {
-        List<Hotel> hotels = hotelRepository.search(hotelSearch);
-        return hotelMapper.toDTOs(hotels);
+    public Page<HotelDTO> getAllHotels(int page, int size) {
+        Pageable pageable = PageRequest.of(page - 1, size);
+        Page<Hotel> hotels = hotelRepository.findAll(pageable);
+        return hotels.map(hotelMapper::toDTO);
     }
 
     @Override
-    public List<HotelDTO> getNearbyHotels(String location) {
-        List<Hotel> hotels = hotelRepository.findNearbyHotels(location);
-        return hotelMapper.toDTOs(hotels);
+    public Page<HotelDTO> search(HotelSearch hotelSearch) {
+        Pageable pageable = PageRequest.of(hotelSearch.getPage() - 1, hotelSearch.getSize());
+        Page<Hotel> hotels = hotelRepository.search(hotelSearch, pageable);
+        return hotels.map(hotelMapper::toDTO);
     }
 
     @Override
-    public List<HotelDTO> getPopularHotels() {
-        List<Hotel> hotels = hotelRepository.findTop5ByOrderByAverageMarkDesc();
-        return hotelMapper.toDTOs(hotels);
+    public Page<HotelDTO> getNearbyHotels(String location, int page, int size) {
+        Pageable pageable = PageRequest.of(page - 1, size);
+        Page<Hotel> hotels = hotelRepository.findNearbyHotels(location, pageable);
+        return hotels.map(hotelMapper::toDTO);
+    }
+
+    @Override
+    public Page<HotelDTO> getPopularHotels(int page, int size) {
+        Pageable pageable = PageRequest.of(page - 1, size);
+        Page<Hotel> hotels = hotelRepository.findByOrderByAverageMarkDesc(pageable);
+        return hotels.map(hotelMapper::toDTO);
     }
 
     @Override
