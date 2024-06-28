@@ -1,0 +1,5 @@
+INSERT INTO banner (title, description, image, url)
+VALUES ('Travie Room', 'Những căn phòng đặc biệt nhất dành cho Travier', 'https://firebasestorage.googleapis.com/v0/b/travie-8acf1.appspot.com/o/images%2Fbanner%2Fbanner_1.png?alt=media&token=ad32c38f-9e01-49ee-9055-76cad6ff29af', 'myapp://travie/explore'),
+       ('Tình yêu', 'Hơn 300 khách sạn kèm nhiều ưu đãi cho các cặp đôi', 'https://firebasestorage.googleapis.com/v0/b/travie-8acf1.appspot.com/o/images%2Fbanner%2Fbanner_2.png?alt=media&token=b9c97e94-ecd8-4cdf-89ba-a68dd456db31', 'myapp://travie/explore'),
+       ('Sang trọng', 'Trải nghiệm không gian đẳng cấp tại khách sạn 4* - 5*', 'https://firebasestorage.googleapis.com/v0/b/travie-8acf1.appspot.com/o/images%2Fbanner%2Fbanner_3.webp?alt=media&token=2ffeedd1-b260-4def-9af1-f3c6c097cd63', 'myapp://travie/explore'),
+       ('Du lịch', 'Khám phá những vùng đất mới, tận hưởng với từng chuyến đi', 'https://firebasestorage.googleapis.com/v0/b/travie-8acf1.appspot.com/o/images%2Fbanner%2Fbanner_4.png?alt=media&token=1cc99625-d429-472f-aaa4-5bbee02192ee', 'myapp://travie/explore');
