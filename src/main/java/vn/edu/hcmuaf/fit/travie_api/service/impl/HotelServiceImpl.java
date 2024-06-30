@@ -54,6 +54,13 @@ public class HotelServiceImpl implements HotelService {
     }
 
     @Override
+    public Page<HotelDTO> getExploreHotels(int page, int size) {
+        Pageable pageable = PageRequest.of(page - 1, size);
+        Page<Hotel> hotels = hotelRepository.findByOrderByCreatedDateDesc(pageable);
+        return hotels.map(hotelMapper::toDTO);
+    }
+
+    @Override
     public HotelDTO getHotelById(long id) throws BaseException {
         Hotel hotel = hotelRepository.findById(id).orElseThrow(() -> new BaseException("Hotel not found"));
         return hotelMapper.toDTO(hotel);

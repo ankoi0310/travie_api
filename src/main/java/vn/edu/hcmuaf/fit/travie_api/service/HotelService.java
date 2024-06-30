@@ -13,6 +13,8 @@ public interface HotelService {
 
     Page<HotelDTO> getPopularHotels(int page, int size);
 
+    Page<HotelDTO> getExploreHotels(int page, int size);
+
     HotelDTO getHotelById(long id) throws BaseException;
 
     HotelDTO createHotel(HotelCreate hotelCreate) throws BaseException;
