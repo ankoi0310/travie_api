@@ -63,28 +63,44 @@ public class UserServiceImpl implements UserService {
                 user.setPhone(request.getPhone());
             }
 
-            if (!request.getFullName().equals(user.getUserInfo().getFullName())) {
-                user.getUserInfo().setFullName(request.getFullName());
+            if (!request.getNickname().equals(user.getNickname())) {
+                userRepository.findByNickname(request.getNickname())
+                              .orElseThrow(() -> new BadRequestException("Nickname đã tồn tại!"));
+
+                user.setNickname(request.getNickname());
             }
+
+            user.setGender(request.getGender());
+            user.setBirthday(request.getBirthday());
 
             userRepository.save(user);
 
             return userMapper.toUserProfileDTO(user);
         } catch (NotFoundException e) {
+            log.error(e.getMessage());
             throw e;
         } catch (Exception e) {
+            log.error(e.getMessage());
             throw new BaseException("Lỗi khi cập nhật thông tin người dùng!");
         }
     }
 
     @Override
     public void updateAvatar(MultipartFile avatar) throws BaseException {
-        String username = AppUtil.getCurrentUsername();
-        AppUser user = userRepository.findByUsername(username)
-                                     .orElseThrow(() -> new NotFoundException("Không tìm thấy thông tin người " +
-                                             "dùng!"));
+        try {
+            String username = AppUtil.getCurrentUsername();
+            AppUser user = userRepository.findByUsername(username)
+                                         .orElseThrow(() -> new NotFoundException("Không tìm thấy tài khoản người " +
+                                                 "dùng!"));
 
-        userRepository.save(user);
+            userRepository.save(user);
+        } catch (NotFoundException e) {
+            log.error(e.getMessage());
+            throw e;
+        } catch (Exception e) {
+            log.error(e.getMessage());
+            throw new BaseException("Lỗi khi cập nhật ảnh đại diện!");
+        }
     }
 
     @Override

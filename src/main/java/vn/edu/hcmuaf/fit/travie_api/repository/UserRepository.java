@@ -10,7 +10,13 @@ import java.util.Optional;
 public interface UserRepository extends CustomRepository<AppUser, Long> {
     Optional<AppUser> findByUsername(String username);
 
+    Optional<AppUser> findByNickname(String nickname);
+
     Optional<AppUser> findByEmail(String email);
 
     Optional<AppUser> findByPhone(String phone);
+
+    Optional<AppUser> findByFacebookId(String facebookId);
+
+    Optional<AppUser> findByGoogleId(String googleId);
 }

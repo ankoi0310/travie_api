@@ -10,7 +10,12 @@ public class SecurityConstant {
     public static final String TOKEN_CANNOT_BE_VERIFIED = "Token không thể xác thực";
 
     public static final String[] PUBLIC_URLS = {
-            "/auth/**",
+            "/auth/login",
+            "/auth/register",
+            "/auth/verify",
+            "/auth/forgot-password",
+            "/auth/reset-password",
+            "/auth/refresh-token",
             "/banner/**",
             "/hotel/**",
             "/room/**",

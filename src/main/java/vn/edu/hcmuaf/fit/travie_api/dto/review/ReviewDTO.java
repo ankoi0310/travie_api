@@ -21,7 +21,7 @@ public class ReviewDTO extends BaseDTO {
     @NoArgsConstructor
     @AllArgsConstructor
     public static class UserReviewDTO {
-        private String username;
+        private String nickname;
         private String avatar;
     }
 }

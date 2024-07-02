@@ -14,8 +14,14 @@ import vn.edu.hcmuaf.fit.travie_api.service.AuthenticationService;
 public class AuthenticationController {
     private final AuthenticationService authenticationService;
 
-    @PostMapping("/register")
-    public ResponseEntity<HttpResponse> register(@RequestBody RegisterRequest request) throws BaseException {
+    @PostMapping("/check-email")
+    public ResponseEntity<HttpResponse> checkExistEmail(@RequestParam String email) throws BaseException {
+        authenticationService.checkExistEmail(email);
+        return ResponseEntity.ok(HttpResponse.success("Email hợp lệ!"));
+    }
+
+    @PostMapping(path = "/register", consumes = {"multipart/form-data"})
+    public ResponseEntity<HttpResponse> register(@ModelAttribute RegisterRequest request) throws BaseException {
         RegisterResponse registerResponse = authenticationService.register(request);
         return ResponseEntity.ok(HttpResponse.success(registerResponse, "Vui lòng kiểm tra email để lấy mã OTP!"));
     }
@@ -32,9 +38,21 @@ public class AuthenticationController {
         return ResponseEntity.ok().body(HttpResponse.success(loginResponse, "Đăng nhập thành công!"));
     }
 
+    @PostMapping("/login/facebook")
+    public ResponseEntity<HttpResponse> loginFacebook(@RequestParam String accessToken) throws Exception {
+        LoginResponse loginResponse = authenticationService.loginFacebook(accessToken);
+        return ResponseEntity.ok().body(HttpResponse.success(loginResponse, "Đăng nhập thành công!"));
+    }
+
+    @PostMapping("/login/google")
+    public ResponseEntity<HttpResponse> loginGoogle(@RequestParam String accessToken) throws Exception {
+        LoginResponse loginResponse = authenticationService.loginGoogle(accessToken);
+        return ResponseEntity.ok().body(HttpResponse.success(loginResponse, "Đăng nhập thành công!"));
+    }
+
     @PostMapping("/forgot-password")
-    public ResponseEntity<HttpResponse> forgotPassword(@RequestBody ForgotPasswordRequest request) throws BaseException {
-        authenticationService.forgotPassword(request.getEmail());
+    public ResponseEntity<HttpResponse> forgotPassword(@RequestParam String email) throws BaseException {
+        authenticationService.forgotPassword(email);
         return ResponseEntity.ok(HttpResponse.success("Vui lòng kiểm tra email để lấy mã OTP!"));
     }
 
@@ -45,8 +63,8 @@ public class AuthenticationController {
     }
 
     @PostMapping("/refresh-token")
-    public ResponseEntity<HttpResponse> refreshToken(@RequestBody RefreshTokenRequest request) throws BaseException {
-        RefreshTokenResponse refreshTokenResponse = authenticationService.refreshToken(request);
+    public ResponseEntity<HttpResponse> refreshToken(@RequestParam String token) throws BaseException {
+        RefreshTokenResponse refreshTokenResponse = authenticationService.refreshToken(token);
         return ResponseEntity.ok(HttpResponse.success(refreshTokenResponse, "Làm mới token thành công!"));
     }
 }

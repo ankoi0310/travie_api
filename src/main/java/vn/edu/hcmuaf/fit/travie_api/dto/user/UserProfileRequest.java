@@ -11,13 +11,10 @@ import java.time.LocalDate;
 @Data
 public class UserProfileRequest {
     @NotBlank
-    private String username;
+    private String nickname;
 
     @Phone
     private String phone;
-
-    @NotBlank
-    private String fullName;
 
     private Gender gender;
 

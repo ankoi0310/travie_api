@@ -32,6 +32,7 @@ public class SecurityConfiguration {
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http.csrf(AbstractHttpConfigurer::disable).cors(cors -> cors.configurationSource(corsConfigurationSource()))
             .authorizeHttpRequests(req -> {
+                req.requestMatchers("/auth/**").permitAll();
                 req.requestMatchers(SecurityConstant.PUBLIC_URLS).permitAll();
                 req.requestMatchers(SecurityConstant.AUTHENTICATED_URLS).authenticated();
 //                req.requestMatchers(SecurityConstant.ADMIN_URLS).hasRole("ADMIN");
