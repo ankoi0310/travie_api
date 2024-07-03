@@ -3,10 +3,13 @@ package vn.edu.hcmuaf.fit.travie_api.controller;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 import vn.edu.hcmuaf.fit.travie_api.core.exception.BaseException;
 import vn.edu.hcmuaf.fit.travie_api.core.handler.HttpResponse;
 import vn.edu.hcmuaf.fit.travie_api.dto.auth.*;
 import vn.edu.hcmuaf.fit.travie_api.service.AuthenticationService;
+
+import static org.springframework.http.MediaType.MULTIPART_FORM_DATA_VALUE;
 
 @RestController
 @RequestMapping("/auth")
@@ -20,9 +23,10 @@ public class AuthenticationController {
         return ResponseEntity.ok(HttpResponse.success("Email hợp lệ!"));
     }
 
-    @PostMapping(path = "/register", consumes = {"multipart/form-data"})
-    public ResponseEntity<HttpResponse> register(@ModelAttribute RegisterRequest request) throws BaseException {
-        RegisterResponse registerResponse = authenticationService.register(request);
+    @PostMapping(path = "/register", consumes = {MULTIPART_FORM_DATA_VALUE})
+    public ResponseEntity<HttpResponse> register(@RequestParam("avatar") MultipartFile avatar,
+                                                 @RequestPart RegisterRequest request) throws BaseException {
+        RegisterResponse registerResponse = authenticationService.register(avatar, request);
         return ResponseEntity.ok(HttpResponse.success(registerResponse, "Vui lòng kiểm tra email để lấy mã OTP!"));
     }
 

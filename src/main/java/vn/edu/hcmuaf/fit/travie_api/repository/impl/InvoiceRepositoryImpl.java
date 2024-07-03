@@ -22,6 +22,7 @@ public class InvoiceRepositoryImpl extends AbstractRepository<Invoice, Long> imp
     public List<Invoice> findByUser(AppUser user) {
         return queryFactory.selectFrom(qInvoice)
                            .where(qInvoice.user.eq(user))
+                           .orderBy(qInvoice.createdDate.desc())
                            .fetch();
     }
 

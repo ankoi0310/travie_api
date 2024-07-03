@@ -51,19 +51,15 @@ public class InvoiceServiceImpl implements InvoiceService {
         LocalDateTime currentTime = LocalDateTime.now();
         String formattedTime = currentTime.format(formatter);
         List<Invoice> invoices = invoiceRepository.findAllPendingInvoices();
-
-        if (invoices.isEmpty()) {
-            log.info("No pending invoices found at {}", formattedTime);
-            return;
-        }
-
         invoices.forEach(invoice -> {
-            if (invoice.getCreatedDate().plusMinutes(10).isBefore(currentTime)) {
+            if (invoice.getCreatedDate().plusMinutes(1).isBefore(currentTime)) {
                 invoice.setBookingStatus(BookingStatus.CANCELLED);
                 invoice.setPaymentStatus(PaymentStatus.FAILED);
+                String message = String.format("Updated invoice code %s from PENDING to CANCELLED at %s",
+                        invoice.getCode(), formattedTime);
+                log.info(message);
             }
         });
         invoiceRepository.saveAll(invoices);
-        log.info("Updated all invoices status from PENDING to CANCELLED at {}", formattedTime);
     }
 }

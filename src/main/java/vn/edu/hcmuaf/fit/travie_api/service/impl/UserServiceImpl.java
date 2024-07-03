@@ -2,12 +2,12 @@ package vn.edu.hcmuaf.fit.travie_api.service.impl;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 import vn.edu.hcmuaf.fit.travie_api.core.exception.*;
+import vn.edu.hcmuaf.fit.travie_api.core.infrastructure.firebase.FirebaseService;
 import vn.edu.hcmuaf.fit.travie_api.core.shared.utils.AppUtil;
 import vn.edu.hcmuaf.fit.travie_api.dto.auth.ChangePasswordRequest;
 import vn.edu.hcmuaf.fit.travie_api.dto.invoice.InvoiceDTO;
@@ -19,21 +19,21 @@ import vn.edu.hcmuaf.fit.travie_api.repository.UserRepository;
 import vn.edu.hcmuaf.fit.travie_api.service.InvoiceService;
 import vn.edu.hcmuaf.fit.travie_api.service.UserService;
 
+import java.io.File;
 import java.util.List;
+import java.util.Optional;
 
 @Log4j2
 @Service
 @Transactional
 @RequiredArgsConstructor
 public class UserServiceImpl implements UserService {
-    @Value("${firebase.storage.bucket}")
-    private String firebaseStorageBucket;
-
     private final UserRepository userRepository;
     private final UserMapper userMapper;
     private final PasswordEncoder passwordEncoder;
 
     private final InvoiceService invoiceService;
+    private final FirebaseService firebaseService;
 
     @Override
     public UserProfileDTO getProfile() throws BaseException {
@@ -63,13 +63,15 @@ public class UserServiceImpl implements UserService {
                 user.setPhone(request.getPhone());
             }
 
-            if (!request.getNickname().equals(user.getNickname())) {
-                userRepository.findByNickname(request.getNickname())
-                              .orElseThrow(() -> new BadRequestException("Nickname đã tồn tại!"));
-
-                user.setNickname(request.getNickname());
+            Optional<AppUser> userOptionalByNickname = userRepository.findByNickname(request.getNickname());
+            if (userOptionalByNickname.isPresent()) {
+                AppUser userByNickname = userOptionalByNickname.get();
+                if (request.getNickname().equals(user.getNickname()) && userByNickname.getId() != user.getId()) {
+                    throw new BadRequestException("Nickname đã tồn tại!");
+                }
             }
 
+            user.setNickname(request.getNickname());
             user.setGender(request.getGender());
             user.setBirthday(request.getBirthday());
 
@@ -92,6 +94,14 @@ public class UserServiceImpl implements UserService {
             AppUser user = userRepository.findByUsername(username)
                                          .orElseThrow(() -> new NotFoundException("Không tìm thấy tài khoản người " +
                                                  "dùng!"));
+
+            if (avatar != null) {
+                String filename = avatar.getOriginalFilename();
+                File file = firebaseService.convertToFile(avatar, filename);
+                String URL = firebaseService.uploadFile(file, filename);
+                file.delete();
+                user.setAvatar(URL);
+            }
 
             userRepository.save(user);
         } catch (NotFoundException e) {

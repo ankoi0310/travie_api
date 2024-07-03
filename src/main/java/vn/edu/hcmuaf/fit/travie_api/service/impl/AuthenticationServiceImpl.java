@@ -13,7 +13,9 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 import vn.edu.hcmuaf.fit.travie_api.core.exception.*;
+import vn.edu.hcmuaf.fit.travie_api.core.infrastructure.firebase.FirebaseService;
 import vn.edu.hcmuaf.fit.travie_api.core.infrastructure.jwt.JwtProvider;
 import vn.edu.hcmuaf.fit.travie_api.core.infrastructure.mail.MailService;
 import vn.edu.hcmuaf.fit.travie_api.core.shared.constants.AppConstant;
@@ -36,6 +38,7 @@ import static vn.edu.hcmuaf.fit.travie_api.core.shared.constants.AppConstant.DEF
 @Service
 @RequiredArgsConstructor
 public class AuthenticationServiceImpl implements AuthenticationService {
+    private final FirebaseService firebaseService;
     @Value("${facebook.app-secret}")
     private String appSecret;
 
@@ -56,7 +59,7 @@ public class AuthenticationServiceImpl implements AuthenticationService {
     }
 
     @Override
-    public RegisterResponse register(RegisterRequest registerRequest) throws BaseException {
+    public RegisterResponse register(MultipartFile avatar, RegisterRequest registerRequest) throws BaseException {
         try {
             Optional<AppUser> appUserEmail = userRepository.findByEmail(registerRequest.getEmail());
             if (appUserEmail.isPresent()) {
@@ -83,12 +86,14 @@ public class AuthenticationServiceImpl implements AuthenticationService {
                                      .appRole(defaultAppRole)
                                      .build();
 
-            System.out.println(registerRequest.getAvatar());
-//            if (registerRequest.getAvatar() == null) {
+//            if (avatar == null) {
             newUser.setAvatar(DEFAULT_BASE_AVATAR_URL + newUser.getNickname());
 //            } else {
-            // TODO: Save avatar to firebase storage and get url
-//                System.out.println(registerRequest.getAvatar().getOriginalFilename());
+//                String fileName = avatar.getOriginalFilename();
+//                fileName = UUID.randomUUID().toString().concat(firebaseService.getExtension(fileName));
+//                File file = firebaseService.convertToFile(avatar, fileName);
+//                String URL = firebaseService.uploadFile(file, fileName);
+//                newUser.setAvatar(URL);
 //            }
 
             userRepository.save(newUser);
