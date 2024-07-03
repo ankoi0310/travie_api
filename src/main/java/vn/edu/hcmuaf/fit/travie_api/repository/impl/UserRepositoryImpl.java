@@ -12,7 +12,6 @@ import java.util.Optional;
 @Repository
 public class UserRepositoryImpl extends AbstractRepository<AppUser, Long> implements UserRepository {
     private final QAppUser qAppUser = QAppUser.appUser;
-//    private final QAppRole qAppRole = QAppRole.appRole;
 
     protected UserRepositoryImpl(EntityManager entityManager) {
         super(AppUser.class, entityManager);
@@ -23,7 +22,15 @@ public class UserRepositoryImpl extends AbstractRepository<AppUser, Long> implem
         // username is email or phone
         return Optional.ofNullable(queryFactory
                 .selectFrom(qAppUser)
-                .where(qAppUser.username.eq(username).or(qAppUser.email.eq(username)).or(qAppUser.phone.eq(username)))
+                .where(qAppUser.nickname.eq(username).or(qAppUser.email.eq(username)).or(qAppUser.phone.eq(username)))
+                .fetchOne());
+    }
+
+    @Override
+    public Optional<AppUser> findByNickname(String nickname) {
+        return Optional.ofNullable(queryFactory
+                .selectFrom(qAppUser)
+                .where(qAppUser.nickname.eq(nickname))
                 .fetchOne());
     }
 
@@ -41,5 +48,15 @@ public class UserRepositoryImpl extends AbstractRepository<AppUser, Long> implem
                 .selectFrom(qAppUser)
                 .where(qAppUser.phone.eq(phone))
                 .fetchOne());
+    }
+
+    @Override
+    public Optional<AppUser> findByFacebookId(String facebookId) {
+        return Optional.empty();
+    }
+
+    @Override
+    public Optional<AppUser> findByGoogleId(String googleId) {
+        return Optional.empty();
     }
 }

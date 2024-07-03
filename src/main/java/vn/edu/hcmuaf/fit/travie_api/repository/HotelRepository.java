@@ -22,5 +22,7 @@ public interface HotelRepository extends CustomRepository<Hotel, Long> {
 
     Page<Hotel> findByOrderByAverageMarkDesc(Pageable pageable);
 
+    Page<Hotel> findByOrderByCreatedDateDesc(Pageable pageable);
+
     Optional<Hotel> findByName(String name);
 }

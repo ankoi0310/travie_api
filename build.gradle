@@ -24,6 +24,7 @@ repositories {
 compileJava {
     options.compilerArgs = [
             '-Amapstruct.defaultComponentModel=spring',
+            '-Amapstruct.verbose=true',
     ]
 }
 
@@ -56,7 +57,10 @@ dependencies {
 
     /* firebase */
     implementation 'com.google.guava:guava:33.1.0-jre'
-    implementation 'com.google.firebase:firebase-admin:9.2.0'
+    implementation 'com.google.firebase:firebase-admin:9.3.0'
+
+    /* facebook */
+    implementation 'com.restfb:restfb:2024.9.0'
 
     /* http */
     implementation 'org.apache.httpcomponents.client5:httpclient5:5.3.1'

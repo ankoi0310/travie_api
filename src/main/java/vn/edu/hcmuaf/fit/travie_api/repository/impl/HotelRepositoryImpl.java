@@ -72,6 +72,16 @@ public class HotelRepositoryImpl extends AbstractRepository<Hotel, Long> impleme
     }
 
     @Override
+    public Page<Hotel> findByOrderByCreatedDateDesc(Pageable pageable) {
+        List<Hotel> hotels = queryFactory.selectFrom(qHotel)
+                                         .orderBy(qHotel.createdDate.desc())
+                                         .limit(pageable.getPageSize())
+                                         .offset(pageable.getOffset())
+                                         .fetch();
+        return new PageImpl<>(hotels, pageable, hotels.size());
+    }
+
+    @Override
     public Optional<Hotel> findByName(String name) {
         return Optional.ofNullable(queryFactory
                 .selectFrom(qHotel)

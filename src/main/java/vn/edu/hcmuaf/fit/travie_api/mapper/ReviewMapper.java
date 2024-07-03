@@ -9,20 +9,20 @@ import java.util.List;
 @Mapper
 public interface ReviewMapper {
     @Named("toReviewDTO")
-    @Mapping(target = "user.username", source = "user.username")
-    @Mapping(target = "user.avatar", source = "user.userInfo.avatar")
-    ReviewDTO toReviewDTO(Review review);
+    @Mapping(target = "user.nickname", source = "user.nickname")
+    @Mapping(target = "user.avatar", source = "user.avatar")
+    ReviewDTO toDTO(Review review);
 
     @Named("toReviewEntity")
-    @Mapping(target = "user.username", source = "user.username")
-    @Mapping(target = "user.userInfo.avatar", source = "user.avatar")
-    Review toReviewEntity(ReviewDTO reviewDTO);
+    @Mapping(target = "user.nickname", source = "user.nickname")
+    @Mapping(target = "user.avatar", source = "user.avatar")
+    Review toEntity(ReviewDTO reviewDTO);
 
     @Named("toReviewDTOs")
     @IterableMapping(qualifiedByName = "toReviewDTO")
-    List<ReviewDTO> toReviewDTOs(List<Review> reviews);
+    List<ReviewDTO> toDTOs(List<Review> reviews);
 
     @Named("toReviewEntities")
     @IterableMapping(qualifiedByName = "toReviewEntity")
-    List<Review> toReviewEntities(List<ReviewDTO> reviewDTOs);
+    List<Review> toEntities(List<ReviewDTO> reviewDTOs);
 }

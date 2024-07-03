@@ -44,6 +44,13 @@ public class HotelController {
         return ResponseEntity.ok(HttpResponse.success(hotels, "Lấy danh sách khách sạn phổ biến thành công"));
     }
 
+    @GetMapping("/explore")
+    public ResponseEntity<HttpResponse> getExploreHotels(@RequestParam(defaultValue = "1") int page,
+                                                         @RequestParam(defaultValue = "5") int size) {
+        Page<HotelDTO> hotels = hotelService.getExploreHotels(page, size);
+        return ResponseEntity.ok(HttpResponse.success(hotels, "Lấy danh sách khách sạn thành công"));
+    }
+
     @GetMapping("/{id}")
     public ResponseEntity<HttpResponse> getHotelById(@PathVariable long id) throws BaseException {
         HotelDTO hotel = hotelService.getHotelById(id);

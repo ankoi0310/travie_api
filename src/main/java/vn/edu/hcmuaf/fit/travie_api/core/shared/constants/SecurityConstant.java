@@ -16,8 +16,10 @@ public class SecurityConstant {
             "/auth/forgot-password",
             "/auth/reset-password",
             "/auth/refresh-token",
+            "/banner/**",
             "/hotel/**",
             "/room/**",
+            "/review/**",
     };
 
     public static final String[] AUTHENTICATED_URLS = {

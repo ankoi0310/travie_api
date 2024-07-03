@@ -1,13 +1,15 @@
 package vn.edu.hcmuaf.fit.travie_api.dto.auth;
 
-import lombok.Builder;
-import lombok.Data;
+import lombok.*;
 import vn.edu.hcmuaf.fit.travie_api.core.shared.constants.SecurityConstant;
 
-@Data
+@Getter
+@Setter
 @Builder
 public class LoginResponse {
-    private String welcomeName;
+    private String nickname;
+    private String phone;
+    private String avatar;
     private String accessToken;
     private String refreshToken;
 
